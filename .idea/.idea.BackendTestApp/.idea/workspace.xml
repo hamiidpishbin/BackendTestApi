@@ -5,7 +5,22 @@
     <projectFile profileName="IIS Express">BackendTest/BackendTest.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="" />
+    <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackendTest/Controllers/AccountController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackendTest/Controllers/UsersController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackendTest/Repository/IRepository/IUserRepo.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackendTest/Repository/UserRepo.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackendTest/Services/ITokenService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackendTest/Services/TokenService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/dataSources/94a579e1-30c0-4eb3-ac6e-8a2914b59ab8.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/dataSources/94a579e1-30c0-4eb3-ac6e-8a2914b59ab8.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/BackendTest.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/BackendTest.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/UserDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Dtos/UserDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Models/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Models/User.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/appsettings.json" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,9 +39,11 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="DatabaseDriversLRU" value="sqlserver.localdb" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="vue.rearranger.settings.migration" value="true" />
@@ -39,6 +56,7 @@
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
+      <browser name="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" />
       <option name="GENERATE_APPLICATIONHOST_CONFIG" value="1" />
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
@@ -62,6 +80,10 @@
         <option name="Build" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue=".NET Launch Settings Profile.BackendTest" />
+      <item itemvalue=".NET Launch Settings Profile.BackendTest: IIS Express" />
+    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -71,7 +93,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1650269624264</updated>
-      <workItem from="1650269629321" duration="2123000" />
+      <workItem from="1650269629321" duration="10965000" />
     </task>
     <servers />
   </component>

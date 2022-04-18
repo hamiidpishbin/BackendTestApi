@@ -309,6 +309,7 @@
     </schema>
     <schema id="63" parent="2" name="dbo">
       <Current>1</Current>
+      <IntrospectionTimestamp>2022-04-18.15:19:42.087</IntrospectionTimestamp>
       <ObjectId>1</ObjectId>
     </schema>
     <schema id="64" parent="2" name="guest">

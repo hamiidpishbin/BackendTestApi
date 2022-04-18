@@ -29,11 +29,11 @@ public class UserRepo : IUserRepo
 
     public async Task<User> CreateUser(UserDto userDto)
     {
+        
         var query = @"INSERT INTO Users (Username, Password) VALUES (@Username, @Password)" + @"SELECT CAST(SCOPE_IDENTITY() as int)";
-
         
         var parameters = new DynamicParameters();
-        parameters.Add("Username", userDto.UserName, DbType.String);
+        parameters.Add("Username", userDto.Username, DbType.String);
         parameters.Add("Password", userDto.Password, DbType.String);
         
         using var connection = _dapperContext.CreateConnection();
@@ -43,9 +43,23 @@ public class UserRepo : IUserRepo
         var createdUser = new User()
         {
             Id = createdUserId,
-            UserName = userDto.UserName
+            Username = userDto.Username
         };
 
         return createdUser;
+    }
+
+    public async Task<User> CheckDuplicateUser(UserDto userDto)
+    {
+        var query = @"SELECT Username FROM Users WHERE Username = @Username";
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var parameters = new DynamicParameters();
+        parameters.Add("Username", userDto.Username, DbType.String);
+
+        var user = await connection.QuerySingleOrDefaultAsync<User>(query, parameters);
+
+        return user;
     }
 }

@@ -7,4 +7,5 @@ public interface IUserRepo
 {
     Task<IEnumerable<User>> GetUsers();
     Task<User> CreateUser(UserDto userDto);
+    Task<User> CheckDuplicateUser(UserDto userDto);
 }

@@ -6,14 +6,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/dataSources.local.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/dataSources/94a579e1-30c0-4eb3-ac6e-8a2914b59ab8/storage_v2/_src_/database/BackendTest.Jv2RVA/schema/dbo.sYMBAA.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/AccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/AccountController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/WeatherForecastController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/UserDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Dtos/UserDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Models/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Models/User.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Repository/IRepository/IUserRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/IRepository/IUserRepo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/BackendTest.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/BackendTest.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackendTest/Repository/UserRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/UserRepo.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -97,7 +91,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1650269624264</updated>
-      <workItem from="1650269629321" duration="16234000" />
+      <workItem from="1650269629321" duration="17316000" />
     </task>
     <servers />
   </component>

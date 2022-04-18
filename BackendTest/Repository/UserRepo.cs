@@ -31,10 +31,12 @@ public class UserRepo : IUserRepo
     {
         
         var query = @"INSERT INTO Users (Username, Password) VALUES (@Username, @Password)" + @"SELECT CAST(SCOPE_IDENTITY() as int)";
+
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
         
         var parameters = new DynamicParameters();
         parameters.Add("Username", userDto.Username, DbType.String);
-        parameters.Add("Password", userDto.Password, DbType.String);
+        parameters.Add("Password", hashedPassword, DbType.String);
         
         using var connection = _dapperContext.CreateConnection();
 

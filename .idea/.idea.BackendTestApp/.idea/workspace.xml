@@ -5,11 +5,7 @@
     <projectFile profileName="IIS Express">BackendTest/BackendTest.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/BackendTest.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/BackendTest.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Program.cs" afterDir="false" />
-    </list>
+    <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -75,7 +71,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1650269624264</updated>
-      <workItem from="1650269629321" duration="1616000" />
+      <workItem from="1650269629321" duration="2123000" />
     </task>
     <servers />
   </component>

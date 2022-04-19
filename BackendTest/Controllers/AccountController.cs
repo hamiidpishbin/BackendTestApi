@@ -23,14 +23,14 @@ namespace BackendTest.Controllers
         }
         
         [HttpPost("register")]
-        public async Task<IActionResult> CreateUser(UserDto userDto)
+        public async Task<IActionResult> RegisterUser(UserDto userDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Username and/or password cannot be empty");
             }
 
-            var duplicateUser = _userRepo.CheckDuplicateUser(userDto);
+            var duplicateUser = _userRepo.CheckExistingUser(userDto.Username);
 
             if (duplicateUser.Result != null)
             {
@@ -47,6 +47,33 @@ namespace BackendTest.Controllers
             {
                 return Problem(exception.Message);
             }
+        }
+
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser(UserDto userDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Username and/or password cannot be empty");
+            }
+
+            var user = await _userRepo.CheckExistingUser(userDto.Username);
+
+            if (user == null)
+            {
+                return BadRequest("Username or password is incorrect");
+            }
+
+            var verifiedPassword = BCrypt.Net.BCrypt.Verify(userDto.Password, user.Password);
+
+            if (!verifiedPassword)
+            {
+                return BadRequest("Username or password is incorrect");
+            }
+
+            return Ok("User logged in");
+
         }
     }
 }

@@ -45,23 +45,25 @@ public class UserRepo : IUserRepo
         var createdUser = new User()
         {
             Id = createdUserId,
-            Username = userDto.Username
+            Username = userDto.Username,
+            Password = hashedPassword
         };
 
         return createdUser;
     }
 
-    public async Task<User> CheckDuplicateUser(UserDto userDto)
+    public async Task<User> CheckExistingUser(string username)
     {
-        var query = @"SELECT Username FROM Users WHERE Username = @Username";
+        var query = @"SELECT * FROM Users WHERE Username = @Username";
 
         using var connection = _dapperContext.CreateConnection();
 
         var parameters = new DynamicParameters();
-        parameters.Add("Username", userDto.Username, DbType.String);
+        parameters.Add("Username", username, DbType.String);
 
         var user = await connection.QuerySingleOrDefaultAsync<User>(query, parameters);
-
+        
         return user;
     }
+    
 }

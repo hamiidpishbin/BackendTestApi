@@ -7,7 +7,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/BackendTest.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/BackendTest.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/AccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/AccountController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Repository/IRepository/IUserRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/IRepository/IUserRepo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackendTest/Repository/UserRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/UserRepo.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -91,7 +92,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1650269624264</updated>
-      <workItem from="1650269629321" duration="17316000" />
+      <workItem from="1650269629321" duration="20546000" />
     </task>
     <servers />
   </component>
@@ -115,5 +116,24 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/BackendTest/Repository/UserRepo.cs</url>
+          <line>65</line>
+          <properties documentPath="$PROJECT_DIR$/BackendTest/Repository/UserRepo.cs" initialLine="65" containingFunctionPresentation="method 'CheckExistingUser'">
+            <startOffsets>
+              <option value="1923" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1956" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

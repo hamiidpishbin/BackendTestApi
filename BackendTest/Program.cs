@@ -36,6 +36,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
                 (builder.Configuration["Jwt:Key"]))
     };
 });
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireRoles", policyBuilder => policyBuilder.RequireClaim("Role"));
+});
 
 var app = builder.Build();
 
@@ -50,6 +54,7 @@ app.UseHttpsRedirection();
 
 // app.UseSession();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

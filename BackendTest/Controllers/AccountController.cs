@@ -89,7 +89,7 @@ namespace BackendTest.Controllers
                 
                 var token = _tokenService.GenerateJwtToken(user);
 
-                return Ok(new {token = token, roles = rolesList});
+                return Ok(new {token = token.Result, roles = rolesList});
             }
             catch (Exception exception)
             {

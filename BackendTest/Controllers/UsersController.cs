@@ -17,7 +17,8 @@ public class UsersController : ControllerBase
     }
     
     [HttpGet]
-    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = "USER")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> GetUsers()
     {
         try

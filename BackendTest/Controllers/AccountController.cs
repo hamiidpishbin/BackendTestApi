@@ -18,11 +18,13 @@ namespace BackendTest.Controllers
     {
         private readonly IUserRepo _userRepo;
         private readonly ITokenService _tokenService;
+        private readonly IUserRolesRepo _userRolesRepo;
 
-        public AccountController(IUserRepo userRepo, ITokenService tokenService)
+        public AccountController(IUserRepo userRepo, ITokenService tokenService, IUserRolesRepo userRolesRepo)
         {
             _userRepo = userRepo;
             _tokenService = tokenService;
+            _userRolesRepo = userRolesRepo;
         }
         
         
@@ -46,6 +48,8 @@ namespace BackendTest.Controllers
             {
                 var createdUser = await _userRepo.CreateUser(userDto);
 
+                await _userRolesRepo.AssignUserRole(createdUser.Id);
+
                 return Ok(createdUser);
             }
             catch (Exception exception)
@@ -55,31 +59,42 @@ namespace BackendTest.Controllers
         }
 
 
+        
+        
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser(UserDto userDto)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest("Username and/or password cannot be empty");
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Username and/or password cannot be empty");
+                }
+
+                var user = await _userRepo.CheckExistingUser(userDto.Username);
+
+                if (user == null)
+                {
+                    return BadRequest("Username or password is incorrect");
+                }
+
+                var verifiedPassword = BCrypt.Net.BCrypt.Verify(userDto.Password, user.Password);
+
+                if (!verifiedPassword)
+                {
+                    return BadRequest("Username or password is incorrect");
+                }
+
+                var rolesList = await _userRolesRepo.GetRoles(user.Id);
+                
+                var token = _tokenService.GenerateJwtToken(user);
+
+                return Ok(new {token = token, roles = rolesList});
             }
-
-            var user = await _userRepo.CheckExistingUser(userDto.Username);
-
-            if (user == null)
+            catch (Exception exception)
             {
-                return BadRequest("Username or password is incorrect");
+                return Problem(exception.Message);
             }
-
-            var verifiedPassword = BCrypt.Net.BCrypt.Verify(userDto.Password, user.Password);
-
-            if (!verifiedPassword)
-            {
-                return BadRequest("Username or password is incorrect");
-            }
-
-            var token = _tokenService.GenerateJwtToken(user);
-
-            return Ok(new {token = token});
 
         }
     }

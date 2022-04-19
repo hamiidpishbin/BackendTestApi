@@ -18,6 +18,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddTransient<IUserRepo, UserRepo>();
 builder.Services.AddTransient<ITokenService, TokenService>();
+builder.Services.AddTransient<IUserRolesRepo, UserRolesRepo>();
 
 var app = builder.Build();
 

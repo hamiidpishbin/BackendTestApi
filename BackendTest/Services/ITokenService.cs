@@ -1,9 +1,10 @@
 using BackendTest.Dtos;
+using BackendTest.Models;
 
 namespace BackendTest.Services;
 
 public interface ITokenService
 {
-    string BuildToken(string key, string issuer, UserDto user);
+    string GenerateJwtToken(User user);
     bool ValidateToken(string key, string issuer, string audience, string token);
 }

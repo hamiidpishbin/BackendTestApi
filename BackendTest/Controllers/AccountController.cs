@@ -6,6 +6,7 @@ using BackendTest.Data;
 using BackendTest.Dtos;
 using BackendTest.Models;
 using BackendTest.Repository.IRepository;
+using BackendTest.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,11 +17,15 @@ namespace BackendTest.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IUserRepo _userRepo;
-        
-        public AccountController(IUserRepo userRepo)
+        private readonly ITokenService _tokenService;
+
+        public AccountController(IUserRepo userRepo, ITokenService tokenService)
         {
             _userRepo = userRepo;
+            _tokenService = tokenService;
         }
+        
+        
         
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser(UserDto userDto)
@@ -72,7 +77,9 @@ namespace BackendTest.Controllers
                 return BadRequest("Username or password is incorrect");
             }
 
-            return Ok("User logged in");
+            var token = _tokenService.GenerateJwtToken(user);
+
+            return Ok(new {token = token});
 
         }
     }

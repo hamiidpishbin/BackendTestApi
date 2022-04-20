@@ -4,6 +4,7 @@ using BackendTest.Dtos;
 using BackendTest.Models;
 using BackendTest.Repository.IRepository;
 using Dapper;
+using Microsoft.VisualBasic;
 
 namespace BackendTest.Repository;
 
@@ -52,7 +53,9 @@ public class UserRepo : IUserRepo
         return createdUser;
     }
 
-    public async Task<User> CheckExistingUser(string username)
+    
+    
+    public async Task<User> RetrieveUserFromDatabase(string username)
     {
         var query = @"SELECT * FROM Users WHERE Username = @Username";
 
@@ -66,4 +69,12 @@ public class UserRepo : IUserRepo
         return user;
     }
     
+
+
+
+    public async Task ChangePasswordByUser(UserDto userDto)
+    {
+        
+    }
+
 }

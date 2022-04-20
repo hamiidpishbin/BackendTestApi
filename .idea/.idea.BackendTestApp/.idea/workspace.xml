@@ -6,8 +6,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/BackendTest/Controllers/BaseController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/UsersController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/UsersController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/AccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/AccountController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/UserDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Dtos/UserDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Repository/IUserRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/IUserRepo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Repository/UserRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/UserRepo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackendTest/Services/TokenService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Services/TokenService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -91,7 +95,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1650269624264</updated>
-      <workItem from="1650269629321" duration="44327000" />
+      <workItem from="1650269629321" duration="52844000" />
     </task>
     <servers />
   </component>
@@ -115,5 +119,24 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/BackendTest/Dtos/UserDto.cs</url>
+          <line>8</line>
+          <properties documentPath="$PROJECT_DIR$/BackendTest/Dtos/UserDto.cs" initialLine="10" containingFunctionPresentation="constructor 'UserDto'">
+            <startOffsets>
+              <option value="182" />
+            </startOffsets>
+            <endOffsets>
+              <option value="183" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

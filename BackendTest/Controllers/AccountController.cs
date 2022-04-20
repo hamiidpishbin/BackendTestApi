@@ -14,7 +14,7 @@ namespace BackendTest.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController : BaseController
     {
         private readonly IUserRepo _userRepo;
         private readonly ITokenService _tokenService;
@@ -32,12 +32,13 @@ namespace BackendTest.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser(UserDto userDto)
         {
-            if (!ModelState.IsValid)
+            
+            if (string.IsNullOrWhiteSpace(userDto.Username) || string.IsNullOrWhiteSpace(userDto.Password))
             {
                 return BadRequest("Username and/or password cannot be empty");
             }
 
-            var duplicateUser = _userRepo.CheckExistingUser(userDto.Username);
+            var duplicateUser = _userRepo.RetrieveUserFromDatabase(userDto.Username);
 
             if (duplicateUser.Result != null)
             {
@@ -66,12 +67,12 @@ namespace BackendTest.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
+                if (string.IsNullOrWhiteSpace(userDto.Username) || string.IsNullOrWhiteSpace(userDto.Password))
                 {
                     return BadRequest("Username and/or password cannot be empty");
                 }
 
-                var user = await _userRepo.CheckExistingUser(userDto.Username);
+                var user = await _userRepo.RetrieveUserFromDatabase(userDto.Username);
 
                 if (user == null)
                 {
@@ -97,5 +98,14 @@ namespace BackendTest.Controllers
             }
 
         }
+
+
+
+
+        // [HttpPut("changePassword")]
+        // public async Task<IActionResult> ChangePasswordByUser(ChangePasswordDto changePasswordDto)
+        // {
+        //     
+        // }
     }
 }

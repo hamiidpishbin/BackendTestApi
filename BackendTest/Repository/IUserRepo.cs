@@ -7,5 +7,6 @@ public interface IUserRepo
 {
     Task<IEnumerable<User>> GetUsers();
     Task<User> CreateUser(UserDto userDto);
-    Task<User> CheckExistingUser(string username);
+    Task<User> RetrieveUserFromDatabase(string username);
+    Task ChangePasswordByUser(UserDto userDto);
 }

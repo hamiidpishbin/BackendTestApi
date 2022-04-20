@@ -29,6 +29,7 @@ public class TokenService : ITokenService
         var userRoles = await _userRolesRepo.GetRoles(user.Id);
 
         var claims = userRoles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
+        claims.Add(new Claim("UserId", user.Id.ToString()));
 
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));        

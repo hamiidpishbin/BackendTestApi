@@ -17,8 +17,7 @@ public class UsersController : ControllerBase
     }
     
     [HttpGet]
-    [Authorize(Roles = "USER")]
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Roles = "USER,ADMIN")]
     public async Task<IActionResult> GetUsers()
     {
         try

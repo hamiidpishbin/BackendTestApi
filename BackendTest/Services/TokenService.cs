@@ -4,6 +4,7 @@ using System.Text;
 using BackendTest.Models;
 using BackendTest.Repository.IRepository;
 using Microsoft.IdentityModel.Tokens;
+using NuGet.Packaging;
 
 namespace BackendTest.Services;
 
@@ -27,26 +28,8 @@ public class TokenService : ITokenService
 
         var userRoles = await _userRolesRepo.GetRoles(user.Id);
 
-        string firstRole;
+        var claims = userRoles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
 
-        Claim[] claims;
-
-        if (userRoles.Count == 1)
-        {
-            firstRole = userRoles[0];
-            claims = new[] {
-                new Claim(ClaimTypes.Role, firstRole),
-            };   
-        }
-        else
-        {
-            firstRole = userRoles[0];
-            var secondRole = userRoles[1];
-            claims = new[] {
-                new Claim(ClaimTypes.Role, firstRole),
-                new Claim(ClaimTypes.Role, secondRole)
-            };
-        }
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));        
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);           

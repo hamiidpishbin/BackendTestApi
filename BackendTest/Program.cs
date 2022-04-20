@@ -19,6 +19,8 @@ builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddTransient<IUserRepo, UserRepo>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddTransient<IUserRolesRepo, UserRolesRepo>();
+builder.Services.AddTransient<IUserManager, UserManager>();
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

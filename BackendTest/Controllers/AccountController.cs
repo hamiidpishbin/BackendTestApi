@@ -7,6 +7,7 @@ using BackendTest.Dtos;
 using BackendTest.Models;
 using BackendTest.Repository.IRepository;
 using BackendTest.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,12 +20,14 @@ namespace BackendTest.Controllers
         private readonly IUserRepo _userRepo;
         private readonly ITokenService _tokenService;
         private readonly IUserRolesRepo _userRolesRepo;
+        private readonly IUserManager _userManager;
 
-        public AccountController(IUserRepo userRepo, ITokenService tokenService, IUserRolesRepo userRolesRepo)
+        public AccountController(IUserRepo userRepo, ITokenService tokenService, IUserRolesRepo userRolesRepo, IUserManager userManager)
         {
             _userRepo = userRepo;
             _tokenService = tokenService;
             _userRolesRepo = userRolesRepo;
+            _userManager = userManager;
         }
         
         
@@ -38,7 +41,7 @@ namespace BackendTest.Controllers
                 return BadRequest("Username and/or password cannot be empty");
             }
 
-            var duplicateUser = _userRepo.RetrieveUserFromDatabase(userDto.Username);
+            var duplicateUser = _userRepo.FindUserByUsername(userDto.Username);
 
             if (duplicateUser.Result != null)
             {
@@ -72,7 +75,7 @@ namespace BackendTest.Controllers
                     return BadRequest("Username and/or password cannot be empty");
                 }
 
-                var user = await _userRepo.RetrieveUserFromDatabase(userDto.Username);
+                var user = await _userRepo.FindUserByUsername(userDto.Username);
 
                 if (user == null)
                 {
@@ -102,10 +105,28 @@ namespace BackendTest.Controllers
 
 
 
-        // [HttpPut("changePassword")]
-        // public async Task<IActionResult> ChangePasswordByUser(ChangePasswordDto changePasswordDto)
-        // {
-        //     
-        // }
+        [HttpPut("updatePassword")]
+        [Authorize(Roles = "USER")]
+        public async Task<IActionResult> ChangePasswordByUser(UpdatePasswordDto updatePasswordDto)
+        {
+            if (updatePasswordDto.CurrentPassword == updatePasswordDto.NewPassword)
+            {
+                return BadRequest("New password cannot be the same as the current password.");
+            }
+
+            var newHashedPassword = BCrypt.Net.BCrypt.HashPassword(updatePasswordDto.NewPassword);
+            
+            var user = await _userRepo.FindUserById(UserId);
+
+            try
+            {
+                await _userRepo.ChangePassword(user.Id, newHashedPassword);
+                return Ok("Password changed.");
+            }
+            catch (Exception exception)
+            {
+                return Problem(exception.Message);
+            }
+        }
     }
 }

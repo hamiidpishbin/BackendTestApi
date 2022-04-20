@@ -55,7 +55,7 @@ public class UserRepo : IUserRepo
 
     
     
-    public async Task<User> RetrieveUserFromDatabase(string username)
+    public async Task<User> FindUserByUsername(string username)
     {
         var query = @"SELECT * FROM Users WHERE Username = @Username";
 
@@ -70,11 +70,31 @@ public class UserRepo : IUserRepo
     }
     
 
-
-
-    public async Task ChangePasswordByUser(UserDto userDto)
+    public async Task<User> FindUserById(string userId)
     {
+        var query = @"SELECT * FROM Users WHERE Id = @UserId";
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var parameters = new DynamicParameters();
+        parameters.Add("UserId", userId, DbType.Int32);
+
+        var user = await connection.QuerySingleOrDefaultAsync<User>(query, parameters);
         
+        return user;
+    }
+
+    public async Task ChangePassword(int userId, string newPassword)
+    {
+        var query = @"UPDATE Users SET [Password] = @Password WHERE Id = @UserId";
+
+        var parameters = new DynamicParameters();
+        parameters.Add("UserId", userId, DbType.Int32);
+        parameters.Add("Password", newPassword, DbType.String);
+
+        using var connection = _dapperContext.CreateConnection();
+
+        await connection.ExecuteAsync(query, parameters);
     }
 
 }

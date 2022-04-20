@@ -6,15 +6,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/BackendTest/Dtos/UpdatePasswordDto.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackendTest/Services/IUserManager.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackendTest/Services/UserManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/dataSources/94a579e1-30c0-4eb3-ac6e-8a2914b59ab8.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/dataSources/94a579e1-30c0-4eb3-ac6e-8a2914b59ab8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackendTest/Controllers/AdminController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackendTest/Dtos/UserDeleteDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/AccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/AccountController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/ChangePasswordDto.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/UserDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Dtos/UserDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackendTest/Repository/IUserRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/IUserRepo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackendTest/Repository/UserRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/UserRepo.cs" afterDir="false" />
     </list>
@@ -104,7 +99,9 @@
       <option name="presentableId" value="Default" />
       <updated>1650269624264</updated>
       <workItem from="1650269629321" duration="57750000" />
-      <workItem from="1650459923130" duration="3809000" />
+      <workItem from="1650459923130" duration="8678000" />
+      <workItem from="1650471925643" duration="619000" />
+      <workItem from="1650472567334" duration="1885000" />
     </task>
     <servers />
   </component>

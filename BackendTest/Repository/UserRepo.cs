@@ -70,14 +70,15 @@ public class UserRepo : IUserRepo
     }
     
 
-    public async Task<User> FindUserById(string userId)
+    public async Task<User> FindUserById(int id)
     {
         var query = @"SELECT * FROM Users WHERE Id = @UserId";
 
         using var connection = _dapperContext.CreateConnection();
 
         var parameters = new DynamicParameters();
-        parameters.Add("UserId", userId, DbType.Int32);
+        parameters.Add("UserId", 
+            id, DbType.Int32);
 
         var user = await connection.QuerySingleOrDefaultAsync<User>(query, parameters);
         
@@ -97,4 +98,37 @@ public class UserRepo : IUserRepo
         await connection.ExecuteAsync(query, parameters);
     }
 
+
+
+    public async Task DeleteUser(User user)
+    {
+        var query = @"DELETE FROM UserRoles WHERE UserId = @UserId;
+                      DELETE FROM Users WHERE Id = @Id";
+
+        var parameters = new DynamicParameters();
+        parameters.Add("UserId", user.Id, DbType.Int32);
+        parameters.Add("Id", user.Id, DbType.Int32);
+
+        using var connection = _dapperContext.CreateConnection();
+
+        await connection.ExecuteAsync(query, parameters);
+    }
+
+    
+    
+    public async Task AdminEditUser(int id, UserDto userDto)
+    {
+        var query = @"UPDATE Users SET Username = @Username, [Password] = @Password WHERE Id = @Id";
+
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
+
+        var parameters = new DynamicParameters();
+        parameters.Add("Id", id, DbType.Int32);
+        parameters.Add("Username", hashedPassword, DbType.String);
+        parameters.Add("Password", userDto.Password, DbType.String);
+
+        using var connection = _dapperContext.CreateConnection();
+
+        await connection.ExecuteAsync(query, parameters);
+    }
 }

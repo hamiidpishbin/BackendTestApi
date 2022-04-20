@@ -41,9 +41,9 @@ namespace BackendTest.Controllers
                 return BadRequest("Username and/or password cannot be empty");
             }
 
-            var duplicateUser = _userRepo.FindUserByUsername(userDto.Username);
+            var duplicateUser = await _userRepo.FindUserByUsername(userDto.Username);
 
-            if (duplicateUser.Result != null)
+            if (duplicateUser != null)
             {
                 return BadRequest("Username is already taken");
             }
@@ -116,7 +116,7 @@ namespace BackendTest.Controllers
 
             var newHashedPassword = BCrypt.Net.BCrypt.HashPassword(updatePasswordDto.NewPassword);
             
-            var user = await _userRepo.FindUserById(UserId);
+            var user = await _userRepo.FindUserById(Convert.ToInt32(UserId));
 
             try
             {

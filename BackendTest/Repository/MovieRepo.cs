@@ -136,7 +136,7 @@ public class MovieRepo : IMovieRepo
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    public async Task<List<MovieToUserDto>> FindUserMovies(int userId)
+    public async Task<List<MovieDto>> FindUserMovies(int userId)
     {
         var query =
             @"SELECT UserMovies.MovieId, Movies.Name, Movies.[Year], Directors.Name AS 'DirectorName', Actors.Name AS 'ActorName' FROM UserMovies 
@@ -164,17 +164,16 @@ public class MovieRepo : IMovieRepo
 
 
 
-    private List<MovieToUserDto> MergeActorNames(IEnumerable<UserMovieFromDbDto> movies)
+    private List<MovieDto> MergeActorNames(IEnumerable<UserMovieFromDbDto> movies)
     {
-        var movieDictionary = new Dictionary<int, MovieToUserDto>();
+        var movieDictionary = new Dictionary<int, MovieDto>();
 
         foreach (var movie in movies)
         {
             if (!movieDictionary.ContainsKey(movie.MovieId))
             {
-                movieDictionary.Add(movie.MovieId, new MovieToUserDto()
+                movieDictionary.Add(movie.MovieId, new MovieDto(movie.Name)
                 {
-                    Name = movie.Name,
                     Year = movie.Year,
                     DirectorName = movie.DirectorName,
                     Actors = new List<string>(){movie.ActorName}

@@ -6,28 +6,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/BackendTest/Controllers/MoviesController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackendTest/Dtos/ActorDto.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackendTest/Dtos/DirectorDto.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackendTest/Dtos/MovieTableDto.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackendTest/Dtos/MovieToUserDto.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackendTest/Dtos/UserMovieFromDbDto.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackendTest/Repository/IMovieRepo.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/dataSources/94a579e1-30c0-4eb3-ac6e-8a2914b59ab8.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/dataSources/94a579e1-30c0-4eb3-ac6e-8a2914b59ab8.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/dataSources/94a579e1-30c0-4eb3-ac6e-8a2914b59ab8/storage_v2/_src_/database/BackendTest.Jv2RVA/schema/dbo.sYMBAA.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/dataSources/94a579e1-30c0-4eb3-ac6e-8a2914b59ab8/storage_v2/_src_/database/BackendTest.Jv2RVA/schema/dbo.sYMBAA.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/dataSources/94a579e1-30c0-4eb3-ac6e-8a2914b59ab8/storage_v2/_src_/database/master.YiqNvw/schema/dbo.sYMBAA.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/dataSources/94a579e1-30c0-4eb3-ac6e-8a2914b59ab8/storage_v2/_src_/database/master.YiqNvw/schema/dbo.sYMBAA.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackendTest/Dtos/TestDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/BackendTest.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/BackendTest.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/BaseController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/BaseController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/UsersController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/UserDeleteDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Dtos/UserDeleteDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/UserDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Dtos/UserDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Properties/launchSettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Services/TokenService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Services/TokenService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/WeatherForecast.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/MoviesController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/MoviesController.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -125,7 +106,7 @@
       <workItem from="1650534951112" duration="6348000" />
       <workItem from="1650545736226" duration="18431000" />
       <workItem from="1650719994121" duration="12487000" />
-      <workItem from="1650779657525" duration="17912000" />
+      <workItem from="1650779657525" duration="20235000" />
     </task>
     <servers />
   </component>
@@ -149,5 +130,37 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs</url>
+          <line>24</line>
+          <properties documentPath="$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs" initialLine="24" containingFunctionPresentation="constructor 'MovieDto'">
+            <startOffsets>
+              <option value="399" />
+            </startOffsets>
+            <endOffsets>
+              <option value="400" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs</url>
+          <line>19</line>
+          <properties documentPath="$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs" initialLine="19" containingFunctionPresentation="constructor 'MovieDto'">
+            <startOffsets>
+              <option value="340" />
+            </startOffsets>
+            <endOffsets>
+              <option value="341" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

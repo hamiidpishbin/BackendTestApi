@@ -36,10 +36,14 @@ namespace BackendTest.Controllers
         [HttpPost("add-movie")]
         public async Task<IActionResult> AddMovie(MovieDto movie)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Model state is not valid");
+            }
             try
             {
                 var userMovies = await _movieRepo.FindUserMovies(UserId);
-
+                
                 foreach (var movieObj in userMovies)
                 {
                     if (movieObj.Name == movie.Name)

@@ -15,12 +15,6 @@ public class MovieDto
 
     [Required] public List<ActorDto> Actors { get; set; }
 
-
-    public MovieDto()
-    {
-        
-    }
-    
     public MovieDto(string name)
     {
         Name = name.Trim().Replace("'", "").ToLower();

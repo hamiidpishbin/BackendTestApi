@@ -160,30 +160,10 @@ public class MovieRepo : IMovieRepo
     }
 
 
-    
 
 
 
 
-    public async Task<MovieDto> FindMovieByName(string movieName)
-    {
-        var query = @"SELECT * FROM Movies WHERE Name = @movieName";
-
-        var parameters = new DynamicParameters();
-        parameters.Add("movieName", movieName, DbType.String);
-
-        using var connection = _dapperContext.CreateConnection();
-        
-        var result = await connection.QueryFirstOrDefaultAsync<MovieDto>(query, parameters);
-
-        return result;
-    }
-    
-    
-    
-    
-    
-    
     private List<MovieToUserDto> MergeActorNames(IEnumerable<UserMovieFromDbDto> movies)
     {
         var movieDictionary = new Dictionary<int, MovieToUserDto>();

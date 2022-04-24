@@ -13,7 +13,7 @@ public class MovieDto
     [Required]
     public string DirectorName { get; set; }
 
-    [Required] public List<ActorDto> Actors { get; set; }
+    [Required] public List<string> Actors { get; set; }
 
     public MovieDto(string name)
     {

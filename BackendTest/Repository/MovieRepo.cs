@@ -108,20 +108,20 @@ public class MovieRepo : IMovieRepo
 
 
 
-    private async Task<List<ActorDto>> InsertIntoActorsTable(List<ActorDto> actors, IDbConnection connection)
+    private async Task<List<ActorDto>> InsertIntoActorsTable(List<string> actors, IDbConnection connection)
     {
         var query = @"INSERT INTO Actors (Name) VALUES (@actorName)" + "SELECT CAST(SCOPE_IDENTITY() as int)";
 
         var parameters = new DynamicParameters();
         var insertedActorsList = new List<ActorDto>();
 
-        foreach (var actorObj in actors)
+        foreach (var actor in actors)
         {
-            parameters.Add("actorName", actorObj.Name, DbType.String);
+            parameters.Add("actorName", actor, DbType.String);
 
             var insertedActorId = await connection.QuerySingleAsync<int>(query, parameters);
 
-            var insertedActor = new ActorDto(actorObj.Name)
+            var insertedActor = new ActorDto(actor)
             {
                 Id = insertedActorId
             };

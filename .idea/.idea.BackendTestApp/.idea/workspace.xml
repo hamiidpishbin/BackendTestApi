@@ -6,9 +6,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/BackendTest/Dtos/TestDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/MoviesController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/MoviesController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,7 +25,9 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bebd253e21dcf766929bfdfd74615bfe46e6e1693b289273dbdb82152893/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/4e5769811eddb4d85e7aa3d043adac953abd8c11fa745a41c718c070808ba453/ObjectDefaultConverter.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a3d7ea0581f24783849da1ad3c630b2819de00/8f/334f6503/SmallObjectWithParameterizedConstructorConverter`5.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/701492be2b72efc26b11805bf081759370ca57f4e0efcd79341ef29fbb4e/Utf8JsonReader.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a3d7ea0581f24783849da1ad3c630b2819de00/78/2c6a7d19/ObjectWithParameterizedConstructorConverter`1.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -106,7 +108,7 @@
       <workItem from="1650534951112" duration="6348000" />
       <workItem from="1650545736226" duration="18431000" />
       <workItem from="1650719994121" duration="12487000" />
-      <workItem from="1650779657525" duration="20235000" />
+      <workItem from="1650779657525" duration="20913000" />
     </task>
     <servers />
   </component>
@@ -130,37 +132,5 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs</url>
-          <line>24</line>
-          <properties documentPath="$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs" initialLine="24" containingFunctionPresentation="constructor 'MovieDto'">
-            <startOffsets>
-              <option value="399" />
-            </startOffsets>
-            <endOffsets>
-              <option value="400" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs</url>
-          <line>19</line>
-          <properties documentPath="$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs" initialLine="19" containingFunctionPresentation="constructor 'MovieDto'">
-            <startOffsets>
-              <option value="340" />
-            </startOffsets>
-            <endOffsets>
-              <option value="341" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

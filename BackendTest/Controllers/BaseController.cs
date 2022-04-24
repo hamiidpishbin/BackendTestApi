@@ -4,11 +4,12 @@ namespace BackendTest.Controllers;
 
 public class BaseController : ControllerBase
 {
-    protected string UserId
+    
+    protected int UserId
     {
         get
         {
-            return HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value;
+            return Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value);
         }
     }
 }

@@ -20,6 +20,7 @@ builder.Services.AddTransient<IUserRepo, UserRepo>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddTransient<IUserRolesRepo, UserRolesRepo>();
 builder.Services.AddTransient<IUserManager, UserManager>();
+builder.Services.AddTransient<IMovieRepo, MovieRepo>();
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

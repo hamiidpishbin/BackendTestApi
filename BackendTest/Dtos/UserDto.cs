@@ -11,7 +11,7 @@ public class UserDto
 
     public UserDto(string username, string password)
     {
-        Username = username.Trim().Replace("'", "");
+        Username = username.Trim().Replace("'", "").ToLower();
         Password = password.Trim().Replace("'", "");
     }
 }

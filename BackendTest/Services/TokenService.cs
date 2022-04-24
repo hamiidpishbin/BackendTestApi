@@ -13,7 +13,7 @@ public class TokenService : ITokenService
     private readonly IConfiguration _configuration;
     private readonly IUserRolesRepo _userRolesRepo;
 
-    private const double ExpiryDurationMinutes = 30;
+    private const double ExpiryDurationMinutes = 60;
 
     public  TokenService(IConfiguration configuration, IUserRolesRepo userRolesRepo)
     {

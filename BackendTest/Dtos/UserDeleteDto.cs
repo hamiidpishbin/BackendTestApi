@@ -8,6 +8,6 @@ public class UserDeleteDto
 
     public UserDeleteDto(string username)
     {
-        Username = username.Trim().Replace("'", "");
+        Username = username.Trim().Replace("'", "").ToLower();
     }
 }

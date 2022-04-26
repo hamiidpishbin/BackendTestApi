@@ -2,8 +2,10 @@ using System.Data;
 using BackendTest.Data;
 using BackendTest.Dtos;
 using Dapper;
+using Microsoft.Data.SqlClient;
 
 namespace BackendTest.Repository;
+
 
 public class MovieRepo : IMovieRepo
 {
@@ -19,10 +21,18 @@ public class MovieRepo : IMovieRepo
     public async Task InsertMovieIntoDb(int userId, MovieDto movie)
     {
         using var connection = _dapperContext.CreateConnection();
+
+        var directorInDb = await FindDirectorByName(movie.DirectorName, connection);
+
+        var directorId = directorInDb.Id;
+        if (directorInDb == null)
+        {
+            var insertedDirector = await InsertIntoDirectorsTable(movie.DirectorName, connection);
+            directorId = insertedDirector.Id;
+        }
         
-        var insertedDirector = await InsertIntoDirectorsTable(movie.DirectorName, connection);
         
-        var insertedMovie = await InsertIntoMoviesTable(movie.Name, movie.Year, insertedDirector.Id, connection);
+        var insertedMovie = await InsertIntoMoviesTable(movie.Name, movie.Year, directorId, connection);
         
         await InsertIntoUserMoviesTable(userId, insertedMovie.Id, connection);
         
@@ -131,11 +141,7 @@ public class MovieRepo : IMovieRepo
 
         return insertedActorsList;
     }
-    /// <summary>
-    /// /////////////////////////////////
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <returns></returns>
+
     public async Task<List<MovieDto>> FindUserMovies(int userId)
     {
         var query =
@@ -159,9 +165,53 @@ public class MovieRepo : IMovieRepo
         return mergedMovies;
     }
 
+    public async Task UpdateMovieInDb(int id, MovieDto movie)
+    {
+        using var connection = _dapperContext.CreateConnection();
+        
+        var movieIdDb = await FindMovieById(id);
+        // if (movieIdDb == null)
+        // {
+        //     return null;
+        // }
 
+        await UpdateMovieTable(id, movieIdDb, movie, connection);
+    }
+    
+    
+    private async Task UpdateMovieTable(int movieId, MovieDto movieInDb, MovieDto movie, IDbConnection connection)
+    {
+        var directorInDb = await FindDirectorByName(movie.Name, connection);
+        
+        int DirectorId()
+        {
+            if (directorInDb == null)
+            {
+                var insertedDirector = InsertIntoDirectorsTable(movie.DirectorName, connection).Result;
 
+                return insertedDirector.Id;
+            }
 
+            return directorInDb.Id;
+        }
+
+        if (movie.Name != movieInDb.Name || movie.Year != movieInDb.Year || movie.DirectorName != directorInDb.Name)
+        {
+            var query = @"UPDATE Movies 
+                          SET Name = @movieName, 
+                              Year = @movieYear, 
+                              DirectorId = @directorId WHERE Id = @movieId";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("movieName", movie.Name != movieInDb.Name ? movie.Name : movieInDb.Name, DbType.String);
+            parameters.Add("movieYear", movie.Year != movieInDb.Year ? movie.Year : movieInDb.Year, DbType.Int32);
+            parameters.Add("directorId", DirectorId(), DbType.Int32 );
+            parameters.Add("movieId", movieId, DbType.Int32);
+
+            await connection.ExecuteAsync(query, parameters);
+
+        }
+    }
 
 
     private List<MovieDto> MergeActorNames(IEnumerable<UserMovieFromDbDto> movies)
@@ -186,5 +236,43 @@ public class MovieRepo : IMovieRepo
         }
 
         return movieDictionary.Values.ToList();
+    }
+    
+
+    public async Task<MovieDto> FindMovieById(int id)
+    {
+        var query = @"SELECT Movies.Id AS MovieId, Movies.Name, Movies.[Year], Directors.Name AS DirectorName, Actors.Name AS ActorName FROM Movies 
+                      JOIN Directors ON Directors.Id = Movies.DirectorId
+                      JOIN MovieActors ON Movies.Id = MovieActors.MovieId
+                      JOIN Actors ON MovieActors.ActorId = Actors.Id WHERE Movies.Id = @movieId";
+
+        var parameters = new DynamicParameters();
+        parameters.Add("movieId", id, DbType.Int32);
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var movies = await connection.QueryAsync<UserMovieFromDbDto>(query, parameters);
+
+        if (!movies.Any())
+        {
+            return null;
+        }
+        var movie = MergeActorNames(movies)[0];
+
+        return movie;
+    }
+
+
+
+    private async Task<DirectorDto> FindDirectorByName(string directorName, IDbConnection connection)
+    {
+        var query = @"SELECT * FROM Directors WHERE Name = @directorName";
+
+        var parameters = new DynamicParameters();
+        parameters.Add("directorName", directorName, DbType.String);
+
+        var director = await connection.QueryFirstOrDefaultAsync<DirectorDto>(query, parameters);
+
+        return director;
     }
 }

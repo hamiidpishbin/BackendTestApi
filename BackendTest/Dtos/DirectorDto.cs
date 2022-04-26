@@ -8,6 +8,11 @@ public class DirectorDto
     [Required]
     public string Name { get; }
 
+    public DirectorDto()
+    {
+        
+    }
+
     public DirectorDto(string name)
     {
         Name = name.Trim().Replace("'", "").ToLower();

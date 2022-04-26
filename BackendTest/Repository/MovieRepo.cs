@@ -24,8 +24,12 @@ public class MovieRepo : IMovieRepo
 
         var directorInDb = await FindDirectorByName(movie.DirectorName, connection);
 
-        var directorId = directorInDb.Id;
-        if (directorInDb == null)
+        int directorId;
+        if (directorInDb != null)
+        {
+            directorId = directorInDb.Id;    
+        }
+        else
         {
             var insertedDirector = await InsertIntoDirectorsTable(movie.DirectorName, connection);
             directorId = insertedDirector.Id;
@@ -40,8 +44,6 @@ public class MovieRepo : IMovieRepo
         
         await InsertIntoMovieActorsTable(insertedMovie.Id, insertedActorsList, connection);
     }
-
-    
     
     
     private async Task<MovieTableDto> InsertIntoMoviesTable(string movieName, int movieYear, int directorId, IDbConnection connection)
@@ -64,10 +66,8 @@ public class MovieRepo : IMovieRepo
 
         return createdMovie;
     }
-
-
-
-
+    
+    
     private async Task InsertIntoUserMoviesTable(int userId, int movieId, IDbConnection connection)
     {
         var query = @"INSERT INTO UserMovies (UserId, MovieId) VALUES (@userId, @movieId)";
@@ -78,6 +78,7 @@ public class MovieRepo : IMovieRepo
 
         await connection.ExecuteAsync(query, parameters);
     }
+    
 
     private async Task InsertIntoMovieActorsTable(int movieId, List<ActorDto> actors, IDbConnection connection)
     {
@@ -93,9 +94,6 @@ public class MovieRepo : IMovieRepo
             await connection.ExecuteAsync(query, parameters);
         }
     }
-
-    
-    
     
     
     private async Task<DirectorDto> InsertIntoDirectorsTable(string directorName, IDbConnection connection)
@@ -114,33 +112,60 @@ public class MovieRepo : IMovieRepo
 
         return insertedDirector;
     }
+    
+    
+    private async Task<List<ActorDto>> FindActors(List<string> actors, IDbConnection connection)
+    {
+        var query = @"SELECT * FROM Actors WHERE Name = @ActorName";
 
+        var actorsInDbList = new List<ActorDto>();
 
+        foreach (var actorName in actors)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("ActorName", actorName, DbType.String);
+            
+            var actorInDb = await connection.QueryFirstOrDefaultAsync<ActorDto>(query, parameters);
 
+            if (actorInDb != null)
+            {
+                actorsInDbList.Add(actorInDb);
+            }
+        }
+
+        return actorsInDbList;
+    }
+    
 
     private async Task<List<ActorDto>> InsertIntoActorsTable(List<string> actors, IDbConnection connection)
     {
         var query = @"INSERT INTO Actors (Name) VALUES (@actorName)" + "SELECT CAST(SCOPE_IDENTITY() as int)";
 
-        var parameters = new DynamicParameters();
-        var insertedActorsList = new List<ActorDto>();
+        var actorsInDb = await FindActors(actors, connection);
 
-        foreach (var actor in actors)
+        var actorsList = new List<ActorDto>();
+
+        foreach (var actorObj in actorsInDb)
         {
-            parameters.Add("actorName", actor, DbType.String);
-
-            var insertedActorId = await connection.QuerySingleAsync<int>(query, parameters);
-
-            var insertedActor = new ActorDto(actor)
-            {
-                Id = insertedActorId
-            };
-            
-            insertedActorsList.Add(insertedActor);
+            if (!actors.Contains(actorObj.Name)) continue;
+            actorsList.Add(actorObj);
+            actors.Remove(actorObj.Name);
         }
 
-        return insertedActorsList;
+        foreach (var actorName in actors)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("actorName", actorName, DbType.String);
+
+            var newActorId = await connection.QuerySingleAsync<int>(query, parameters);
+
+            var newActor = new ActorDto(actorName) {Id = newActorId};
+            actorsList.Add(newActor);
+        }
+
+        return actorsList;
     }
+    
 
     public async Task<List<MovieDto>> FindUserMovies(int userId)
     {
@@ -164,6 +189,7 @@ public class MovieRepo : IMovieRepo
 
         return mergedMovies;
     }
+    
 
     public async Task UpdateMovieInDb(int id, MovieDto movie)
     {
@@ -261,8 +287,7 @@ public class MovieRepo : IMovieRepo
 
         return movie;
     }
-
-
+    
 
     private async Task<DirectorDto> FindDirectorByName(string directorName, IDbConnection connection)
     {

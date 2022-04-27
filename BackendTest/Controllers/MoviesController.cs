@@ -59,40 +59,46 @@ namespace BackendTest.Controllers
 
 
 
-        // [HttpPut("update/{id}")]
-        // public async Task<IActionResult> UpdateMovie(int id, MovieDto movie)
-        // {
-        //     try
-        //     {
-        //         var movieInDb = await _movieRepo.FindMovieById(id);
-        //
-        //         if (movieInDb == null)
-        //         {
-        //             return BadRequest("Movie not found");
-        //         }
-        //
-        //         await _movieRepo.UpdateMovieInDb(id, movie);
-        //         return Ok();
-        //     }
-        //     catch (Exception exception)
-        //     {
-        //         return Problem(exception.Message);
-        //     }
-        // }
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdateMovie(int id, MovieDto movie)
+        {
+            try
+            {
+                var movieInDb = await _movieRepo.FindMovieById(id);
+        
+                if (movieInDb == null)
+                {
+                    return NotFound("Movie not found");
+                }
+        
+                await _movieRepo.UpdateMovieInDb(movieInDb, movie);
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                return Problem(exception.Message);
+            }
+        }
         
         
         
-        // [HttpDelete("delete/{id}")]
-        // public async Task<IActionResult> DeleteMovie(int Id)
-        // {
-        //     try
-        //     {
-        //         
-        //     }
-        //     catch (Exception exception)
-        //     {
-        //         return Problem(exception.Message);
-        //     }
-        // }
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteMovie(int id)
+        {
+            try
+            {
+                var movieInDb = await _movieRepo.FindMovieById(id);
+
+                if (movieInDb == null) return NotFound("Movie not found");
+
+                await _movieRepo.DeleteMovieFromDb(UserId, id);
+
+                return Ok("Movie deleted from database");
+            }
+            catch (Exception exception)
+            {
+                return Problem(exception.Message);
+            }
+        }
     }
 }

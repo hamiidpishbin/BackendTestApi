@@ -34,7 +34,7 @@ namespace BackendTest.Controllers
 
 
 
-        [HttpPost("adduser")]
+        [HttpPost("add-user")]
         public async Task<IActionResult> AddUser(UserDto userDto)
         {
             var duplicateUser = await _userRepo.FindUserByUsername(userDto.Username);
@@ -58,7 +58,7 @@ namespace BackendTest.Controllers
 
 
 
-        [HttpDelete("DeleteUser/{id}")]
+        [HttpDelete("delete-user/{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             try
@@ -67,7 +67,7 @@ namespace BackendTest.Controllers
 
                 if (user == null)
                 {
-                    return BadRequest("User not found!");
+                    return NotFound("User not found!");
                 }
 
                 await _userRepo.DeleteUser(user);
@@ -82,7 +82,7 @@ namespace BackendTest.Controllers
 
 
 
-        [HttpPut("EditUser/{id}")]
+        [HttpPut("edit-user/{id}")]
         public async Task<IActionResult> EditUser(int id, UserDto user)
         {
             try
@@ -91,7 +91,7 @@ namespace BackendTest.Controllers
 
                 if (userIdDb == null)
                 {
-                    return BadRequest("User not found");
+                    return NotFound("User not found");
                 }
 
                 await _userRepo.AdminEditUser(id, user);

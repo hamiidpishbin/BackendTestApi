@@ -6,9 +6,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/BackendTest/Dtos/MovieInDbDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/MoviesController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/MoviesController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/AdminController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/AdminController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/MovieInDbDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Dtos/MovieInDbDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/UserMovieFromDbDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Dtos/UserMovieFromDbDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackendTest/Repository/IMovieRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/IMovieRepo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" afterDir="false" />
     </list>
@@ -111,7 +112,7 @@
       <workItem from="1650545736226" duration="18431000" />
       <workItem from="1650719994121" duration="12487000" />
       <workItem from="1650779657525" duration="61231000" />
-      <workItem from="1651035888318" duration="13009000" />
+      <workItem from="1651035888318" duration="27536000" />
     </task>
     <servers />
   </component>
@@ -135,5 +136,37 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs</url>
+          <line>205</line>
+          <properties documentPath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" initialLine="205" containingFunctionPresentation="method 'UpdateMoviesAndDirectorsTables'">
+            <startOffsets>
+              <option value="6738" />
+            </startOffsets>
+            <endOffsets>
+              <option value="6814" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs</url>
+          <line>335</line>
+          <properties documentPath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" initialLine="335" containingFunctionPresentation="method 'DeleteMovieFromDb'">
+            <startOffsets>
+              <option value="11347" />
+            </startOffsets>
+            <endOffsets>
+              <option value="11405" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

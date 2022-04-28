@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using BackendTest.Dtos;
+using BackendTest.Repository;
 using BackendTest.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BackendTest.Controllers
 {
@@ -17,10 +20,12 @@ namespace BackendTest.Controllers
     public class AdminController : BaseController
     {
         private readonly IUserRepo _userRepo;
+        private readonly IMovieRepo _movieRepo;
 
-        public AdminController(IUserRepo userRepo)
+        public AdminController(IUserRepo userRepo, IMovieRepo movieRepo)
         {
             _userRepo = userRepo;
+            _movieRepo = movieRepo;
         }
         
         
@@ -32,8 +37,7 @@ namespace BackendTest.Controllers
             return Ok(users);
         }
 
-
-
+        
         [HttpPost("add-user")]
         public async Task<IActionResult> AddUser(UserDto userDto)
         {
@@ -56,8 +60,7 @@ namespace BackendTest.Controllers
             }
         }
 
-
-
+        
         [HttpDelete("delete-user/{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
@@ -79,8 +82,7 @@ namespace BackendTest.Controllers
                 return Problem(exception.Message);
             }
         }
-
-
+        
 
         [HttpPut("edit-user/{id}")]
         public async Task<IActionResult> EditUser(int id, UserDto user)
@@ -101,6 +103,95 @@ namespace BackendTest.Controllers
             catch (Exception ex)
             {
                 return Problem(ex.Message);
+            }
+        }
+
+
+        [HttpGet("movies")]
+        public async Task<IActionResult> GetAllMovies()
+        {
+            try
+            {
+                var users = await _userRepo.GetUsers();
+
+                if (!users.Any()) return NotFound("DB has no users.");
+
+                var userMovieList = new List<MovieInDbDto>();
+            
+                foreach (var user in users)
+                {
+                    var userMovies = await _movieRepo.FindUserMovies(user.Id);
+
+                    foreach (var userMovie in userMovies)
+                    {
+                        userMovieList.Add(userMovie);
+                    }
+                }
+
+                return Ok(userMovieList);
+            }
+            catch (Exception exception)
+            {
+                return Problem(exception.Message);
+            }
+        }
+
+        [HttpPut("movies/update/{id}")]
+        public async Task<IActionResult> EditMovie([FromRoute]int id, [FromBody]MovieDto movie)
+        {
+            try
+            {
+                var movieInDb = await _movieRepo.FindMovieById(id);
+        
+                if (movieInDb == null)
+                {
+                    return NotFound("Movie not found");
+                }
+        
+                await _movieRepo.UpdateMovieInDb(movieInDb, movie);
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                return Problem(exception.Message);
+            }
+        }
+
+
+        [HttpDelete("movies/delete/{id}")]
+        public async Task<IActionResult> DeleteMovie([FromRoute]int id)
+        {
+            try
+            {
+                var movieInDb = await _movieRepo.FindMovieById(id);
+
+                if (movieInDb == null) return NotFound("Movie not found");
+
+                await _movieRepo.DeleteMovieFromDb(UserId, id);
+
+                return Ok("Movie deleted from database");
+            }
+            catch (Exception exception)
+            {
+                return Problem(exception.Message);
+            }
+        }
+
+
+        [HttpGet("movies/search")]
+        public async Task<IActionResult> GetMoviesByYearRange([FromQuery] [Required]int startYear, [Required]int endYear)
+        {
+            try
+            {
+                var movies = await _movieRepo.FindMoviesByYearRange(startYear, endYear);
+
+                if (!movies.Any()) return NotFound("No movies found in this range");
+
+                return Ok(movies);
+            }
+            catch (Exception exception)
+            {
+                return Problem(exception.Message);
             }
         }
     }

@@ -104,9 +104,11 @@ public class MovieRepo : IMovieRepo
     {
         using var connection = _dapperContext.CreateConnection();
 
-        await AdminDeleteFromUserMoviesTable(movieId, connection);
+        await DeleteFromUserMoviesTable(movieId, connection);
 
-        await DeleteFromMoviesAndMovieActorsTables(movieId, connection);
+        await DeleteFromMovieActorsTable(movieId, connection);
+
+        await DeleteFromMoviesTable(movieId, connection);
     }
     
     public async Task<IEnumerable<MovieInDbDto>> FindMovies(SearchParamsDto searchParams)
@@ -411,10 +413,19 @@ public class MovieRepo : IMovieRepo
         return director;
     }
 
-    private async Task DeleteFromMoviesAndMovieActorsTables(int movieId, IDbConnection connection)
+    private async Task DeleteFromMoviesTable(int movieId, IDbConnection connection)
     {
-        var query = @"DELETE FROM MovieActors WHERE MovieId = @movieId;" +
-                          @"DELETE FROM Movies WHERE Id = @movieId";
+        var query = @"DELETE FROM Movies WHERE Id = @movieId";
+        
+        var parameters = new DynamicParameters();
+        parameters.Add("movieId", movieId, DbType.Int32);
+
+        await connection.ExecuteAsync(query, parameters);
+    }
+    
+    private async Task DeleteFromMovieActorsTable(int movieId, IDbConnection connection)
+    {
+        var query = @"DELETE FROM MovieActors WHERE MovieId = @movieId;";
 
         var parameters = new DynamicParameters();
         parameters.Add("movieId", movieId, DbType.Int32);
@@ -422,7 +433,7 @@ public class MovieRepo : IMovieRepo
         await connection.ExecuteAsync(query, parameters);
     }
     
-    private async Task AdminDeleteFromUserMoviesTable(int movieId, IDbConnection connection)
+    private async Task DeleteFromUserMoviesTable(int movieId, IDbConnection connection)
     {
         var query = @"DELETE FROM UserMovies WHERE MovieId = @movieId";
 

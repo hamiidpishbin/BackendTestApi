@@ -42,10 +42,7 @@ namespace BackendTest.Controllers
 
             if (!movie.Actors.Any()) return BadRequest("List of actors cannot be empty");
 
-            if (movie.Actors.Any(string.IsNullOrWhiteSpace))
-            {
-                return BadRequest("Actor name cannot be empty");
-            }
+            if (movie.Actors.Any(string.IsNullOrWhiteSpace)) return BadRequest("Actor name cannot be empty");
 
             try
             {
@@ -74,11 +71,8 @@ namespace BackendTest.Controllers
             {
                 var movieInDb = await _movieRepo.FindMovieById(id);
         
-                if (movieInDb == null)
-                {
-                    return NotFound("Movie not found");
-                }
-        
+                if (movieInDb == null) return NotFound("Movie not found");
+
                 await _movieRepo.UpdateMovieInDb(movieInDb, movie);
                 return Ok();
             }

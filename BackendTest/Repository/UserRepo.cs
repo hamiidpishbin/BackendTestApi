@@ -2,14 +2,14 @@ using System.Data;
 using BackendTest.Data;
 using BackendTest.Dtos;
 using BackendTest.Models;
-using BackendTest.Repository.IRepository;
 using Dapper;
-using Microsoft.VisualBasic;
 
 namespace BackendTest.Repository;
 
 public class UserRepo : IUserRepo
 {
+    private readonly string DefaultRoleId = "1";
+    
     private readonly DapperContext _dapperContext;
 
     public UserRepo(DapperContext dapperContext)
@@ -17,7 +17,7 @@ public class UserRepo : IUserRepo
         _dapperContext = dapperContext;
     }
     
-    public async Task<IEnumerable<User>> GetUsers()
+    public async Task<IEnumerable<User>> FindAllUsers()
     {
         var query = @"SELECT * FROM Users";
         
@@ -28,48 +28,46 @@ public class UserRepo : IUserRepo
         return users;
     }
 
-    public async Task<User> CreateUser(UserDto userDto)
+    public async Task<User> CreateUser(UserDto user)
     {
-        
-        var query = @"INSERT INTO Users (Username, Password) VALUES (@Username, @Password)" + @"SELECT CAST(SCOPE_IDENTITY() as int)";
+        var query = @"INSERT INTO Users (Username, Password) VALUES (@username, @password)" + @"SELECT CAST(SCOPE_IDENTITY() as int)";
 
-        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
         
         var parameters = new DynamicParameters();
-        parameters.Add("Username", userDto.Username, DbType.String);
-        parameters.Add("Password", hashedPassword, DbType.String);
+        parameters.Add("username", user.Username, DbType.String);
+        parameters.Add("password", hashedPassword, DbType.String);
         
         using var connection = _dapperContext.CreateConnection();
 
         var createdUserId = await connection.QuerySingleAsync<int>(query, parameters);
 
-        var createdUser = new User()
+        var createdUser = new User
         {
             Id = createdUserId,
-            Username = userDto.Username,
+            Username = user.Username,
             Password = hashedPassword
         };
 
+        await AssignUserRole(createdUserId, connection);
+
         return createdUser;
     }
-
-    
     
     public async Task<User> FindUserByUsername(string username)
     {
-        var query = @"SELECT * FROM Users WHERE Username = @Username";
+        var query = @"SELECT * FROM Users WHERE Username = @username";
 
         using var connection = _dapperContext.CreateConnection();
 
         var parameters = new DynamicParameters();
-        parameters.Add("Username", username, DbType.String);
+        parameters.Add("username", username, DbType.String);
 
         var user = await connection.QuerySingleOrDefaultAsync<User>(query, parameters);
         
         return user;
     }
     
-
     public async Task<User> FindUserById(int id)
     {
         var query = @"SELECT * FROM Users WHERE Id = @UserId";
@@ -87,47 +85,71 @@ public class UserRepo : IUserRepo
 
     public async Task ChangePassword(int userId, string newPassword)
     {
-        var query = @"UPDATE Users SET [Password] = @Password WHERE Id = @UserId";
+        var query = @"UPDATE Users SET [Password] = @password WHERE Id = @userId";
 
         var parameters = new DynamicParameters();
-        parameters.Add("UserId", userId, DbType.Int32);
-        parameters.Add("Password", newPassword, DbType.String);
+        parameters.Add("userId", userId, DbType.Int32);
+        parameters.Add("password", newPassword, DbType.String);
 
         using var connection = _dapperContext.CreateConnection();
 
         await connection.ExecuteAsync(query, parameters);
     }
-
-
 
     public async Task DeleteUser(User user)
     {
-        var query = @"DELETE FROM UserRoles WHERE UserId = @UserId;
-                      DELETE FROM Users WHERE Id = @Id";
+        var query = @"DELETE FROM UserRoles WHERE UserId = @userId;
+                      DELETE FROM Users WHERE Id = @userId";
 
         var parameters = new DynamicParameters();
-        parameters.Add("UserId", user.Id, DbType.Int32);
-        parameters.Add("Id", user.Id, DbType.Int32);
+        parameters.Add("userId", user.Id, DbType.Int32);
 
         using var connection = _dapperContext.CreateConnection();
 
         await connection.ExecuteAsync(query, parameters);
     }
-
     
-    
-    public async Task AdminEditUser(int id, UserDto userDto)
+    public async Task AdminEditUser(int id, UserDto user)
     {
-        var query = @"UPDATE Users SET Username = @Username, [Password] = @Password WHERE Id = @Id";
+        var query = @"UPDATE Users SET Username = @username, [Password] = @password WHERE Id = @id";
 
-        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
         var parameters = new DynamicParameters();
-        parameters.Add("Id", id, DbType.Int32);
-        parameters.Add("Username", hashedPassword, DbType.String);
-        parameters.Add("Password", userDto.Password, DbType.String);
+        parameters.Add("id", id, DbType.Int32);
+        parameters.Add("username", user.Username, DbType.String);
+        parameters.Add("password", hashedPassword, DbType.String);
 
         using var connection = _dapperContext.CreateConnection();
+
+        await connection.ExecuteAsync(query, parameters);
+    }
+    
+    public async Task<List<string>> GetRoles(int userId)
+    {
+        var query = @"SELECT Role FROM UserRoles INNER JOIN Roles ON UserRoles.RoleId = Roles.Id WHERE UserId = @userId";
+        var parameters = new DynamicParameters();
+        parameters.Add("userId", userId, DbType.Int32);
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var roles = await connection.QueryAsync(query, parameters);
+        var rolesList = new List<string>();
+        foreach (var roleObj in roles)
+        {
+            rolesList.Add(roleObj.Role);
+        }
+
+        return rolesList;
+    }
+    
+    private async Task AssignUserRole(int userId, IDbConnection connection)
+    {
+        var query = $"INSERT INTO UserRoles (UserId, RoleId) VALUES (@userId, {DefaultRoleId})";
+        var parameters = new DynamicParameters();
+        parameters.Add("userId", userId, DbType.Int32);
+        
+        connection = _dapperContext.CreateConnection();
 
         await connection.ExecuteAsync(query, parameters);
     }

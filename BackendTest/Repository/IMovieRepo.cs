@@ -9,5 +9,5 @@ public interface IMovieRepo
     Task UpdateMovieInDb(MovieInDbDto movieInDb, MovieDto movieForUpdate);
     Task<MovieInDbDto> FindMovieById(int movieId);
     Task DeleteMovieFromDb(int userId, int movieId);
-    Task<IEnumerable<MovieInDbDto>> FindMoviesByYearRange(int startYear, int endYear);
+    Task<IEnumerable<MovieInDbDto>> FindMovies(SearchParamsDto searchParams);
 }

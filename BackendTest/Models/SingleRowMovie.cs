@@ -1,6 +1,6 @@
 namespace BackendTest.Dtos;
 
-public class UserMovieFromDbDto
+public class SingleRowMovie
 {
     public int UserId { get; set; }
     public int MovieId { get; set; }

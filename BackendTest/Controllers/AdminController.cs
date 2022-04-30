@@ -1,16 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using BackendTest.Dtos;
 using BackendTest.Repository;
-using BackendTest.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace BackendTest.Controllers
 {
@@ -30,27 +21,36 @@ namespace BackendTest.Controllers
         
         
         [HttpGet("users")]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetAllUsers()
         {
-            var users = await _userRepo.GetUsers();
+            try
+            {
+                var users = await _userRepo.FindAllUsers();
 
-            return Ok(users);
+                if (!users.Any()) return BadRequest("No user is registered yet");
+
+                return Ok(users);
+            }
+            catch (Exception exception)
+            {
+                return Problem(exception.Message);
+            }
         }
 
         
         [HttpPost("add-user")]
-        public async Task<IActionResult> AddUser(UserDto userDto)
+        public async Task<IActionResult> AddUser(UserDto user)
         {
-            var duplicateUser = await _userRepo.FindUserByUsername(userDto.Username);
-
-            if (duplicateUser != null)
-            {
-                return BadRequest("Username is already taken");
-            }
-
             try
             {
-                var createdUser = await _userRepo.CreateUser(userDto);
+                var duplicateUser = await _userRepo.FindUserByUsername(user.Username);
+
+                if (duplicateUser != null)
+                {
+                    return BadRequest("Username is already taken");
+                }
+                
+                var createdUser = await _userRepo.CreateUser(user);
 
                 return Ok(createdUser);
             }
@@ -112,7 +112,7 @@ namespace BackendTest.Controllers
         {
             try
             {
-                var users = await _userRepo.GetUsers();
+                var users = await _userRepo.FindAllUsers();
 
                 if (!users.Any()) return NotFound("DB has no users.");
 
@@ -176,16 +176,14 @@ namespace BackendTest.Controllers
                 return Problem(exception.Message);
             }
         }
-
+        
 
         [HttpGet("movies/search")]
-        public async Task<IActionResult> GetMoviesByYearRange([FromQuery] [Required]int startYear, [Required]int endYear)
+        public async Task<IActionResult> GetMoviesByName([FromBody] SearchParamsDto searchParams)
         {
             try
             {
-                var movies = await _movieRepo.FindMoviesByYearRange(startYear, endYear);
-
-                if (!movies.Any()) return NotFound("No movies found in this range");
+                var movies = await _movieRepo.FindMovies(searchParams);
 
                 return Ok(movies);
             }

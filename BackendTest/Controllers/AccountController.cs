@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BackendTest.Data;
 using BackendTest.Dtos;
-using BackendTest.Models;
-using BackendTest.Repository.IRepository;
+using BackendTest.Repository;
 using BackendTest.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendTest.Controllers
@@ -18,42 +11,37 @@ namespace BackendTest.Controllers
     public class AccountController : BaseController
     {
         private readonly IUserRepo _userRepo;
-        private readonly ITokenService _tokenService;
-        private readonly IUserRolesRepo _userRolesRepo;
+        private readonly ITokenManager _tokenManager;
         private readonly IUserManager _userManager;
 
-        public AccountController(IUserRepo userRepo, ITokenService tokenService, IUserRolesRepo userRolesRepo, IUserManager userManager)
+        public AccountController(IUserRepo userRepo, ITokenManager tokenManager, IUserManager userManager)
         {
             _userRepo = userRepo;
-            _tokenService = tokenService;
-            _userRolesRepo = userRolesRepo;
+            _tokenManager = tokenManager;
             _userManager = userManager;
         }
         
         
         
-        [HttpPost("register")]
-        public async Task<IActionResult> RegisterUser(UserDto userDto)
+        [HttpPost("signup")]
+        public async Task<IActionResult> Signup([FromBody] UserDto user)
         {
-            
-            if (string.IsNullOrWhiteSpace(userDto.Username) || string.IsNullOrWhiteSpace(userDto.Password))
-            {
-                return BadRequest("Username and/or password cannot be empty");
-            }
-
-            var duplicateUser = await _userRepo.FindUserByUsername(userDto.Username);
-
-            if (duplicateUser != null)
-            {
-                return BadRequest("Username is already taken");
-            }
-
             try
             {
-                var createdUser = await _userRepo.CreateUser(userDto);
+                if (user.Username == user.Password)
+                {
+                    return BadRequest("Username and password cannot be the same!");
+                }
 
-                await _userRolesRepo.AssignUserRole(createdUser.Id);
+                var duplicateUser = await _userRepo.FindUserByUsername(user.Username);
 
+                if (duplicateUser != null)
+                {
+                    return BadRequest("Username is already taken");
+                }
+                
+                var createdUser = await _userRepo.CreateUser(user);
+                
                 return Ok(createdUser);
             }
             catch (Exception exception)
@@ -62,38 +50,31 @@ namespace BackendTest.Controllers
             }
         }
 
-
-        
         
         [HttpPost("login")]
-        public async Task<IActionResult> LoginUser(UserDto userDto)
+        public async Task<IActionResult> Login(UserDto user)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(userDto.Username) || string.IsNullOrWhiteSpace(userDto.Password))
+                var userInDb = await _userRepo.FindUserByUsername(user.Username);
+
+                if (userInDb == null)
                 {
-                    return BadRequest("Username and/or password cannot be empty");
+                    return BadRequest("Username and/or password is incorrect");
                 }
 
-                var user = await _userRepo.FindUserByUsername(userDto.Username);
-
-                if (user == null)
-                {
-                    return BadRequest("Username or password is incorrect");
-                }
-
-                var verifiedPassword = BCrypt.Net.BCrypt.Verify(userDto.Password, user.Password);
+                var verifiedPassword = BCrypt.Net.BCrypt.Verify(user.Password, userInDb.Password);
 
                 if (!verifiedPassword)
                 {
-                    return BadRequest("Username or password is incorrect");
+                    return BadRequest("Username and/or password is incorrect");
                 }
 
-                var rolesList = await _userRolesRepo.GetRoles(user.Id);
+                var rolesList = await _userRepo.GetRoles(userInDb.Id);
                 
-                var token = _tokenService.GenerateJwtToken(user);
+                var token = await _tokenManager.GenerateJwtToken(userInDb);
 
-                return Ok(new {token = token.Result, roles = rolesList});
+                return Ok(new {token, roles = rolesList});
             }
             catch (Exception exception)
             {
@@ -102,24 +83,27 @@ namespace BackendTest.Controllers
 
         }
 
-
-
-
-        [HttpPut("updatePassword")]
+        
+        [HttpPut("update-password")]
         [Authorize(Roles = "USER")]
-        public async Task<IActionResult> ChangePasswordByUser(UpdatePasswordDto updatePasswordDto)
+        public async Task<IActionResult> ChangePassword(UpdatePasswordDto updatePassword)
         {
-            if (updatePasswordDto.CurrentPassword == updatePasswordDto.NewPassword)
+            if (updatePassword.CurrentPassword == updatePassword.NewPassword)
             {
                 return BadRequest("New password cannot be the same as the current password.");
             }
 
-            var newHashedPassword = BCrypt.Net.BCrypt.HashPassword(updatePasswordDto.NewPassword);
             
-            var user = await _userRepo.FindUserById(Convert.ToInt32(UserId));
-
             try
             {
+                var user = await _userRepo.FindUserById(UserId);
+
+                var currentPasswordIsCorrect = BCrypt.Net.BCrypt.Verify(updatePassword.CurrentPassword, user.Password);
+
+                if (!currentPasswordIsCorrect) return BadRequest("Current password is not correct");
+                
+                var newHashedPassword = BCrypt.Net.BCrypt.HashPassword(updatePassword.NewPassword);
+                
                 await _userRepo.ChangePassword(user.Id, newHashedPassword);
                 return Ok("Password changed.");
             }

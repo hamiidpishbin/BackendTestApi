@@ -11,7 +11,7 @@ public class UpdatePasswordDto
 
     public UpdatePasswordDto(string currentPassword, string newPassword)
     {
-        CurrentPassword = currentPassword.Trim().Replace("'", "");
-        NewPassword = newPassword.Trim().Replace("'", "");
+        if (currentPassword != null) CurrentPassword = currentPassword.Trim().Replace("'", "");
+        if (newPassword != null) NewPassword = newPassword.Trim().Replace("'", "");
     }
 }

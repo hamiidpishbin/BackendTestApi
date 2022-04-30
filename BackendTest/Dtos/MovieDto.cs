@@ -11,12 +11,14 @@ public class MovieDto
     public int Year { get; set; }
     
     [Required]
-    public string DirectorName { get; set; }
+    public string DirectorName { get; }
 
-    [Required] public List<string> Actors { get; set; }
+    [Required]
+    public List<string> Actors { get; set; }
 
-    public MovieDto(string name)
+    public MovieDto(string name, string directorName)
     {
-        Name = name.Trim().Replace("'", "").ToLower();
+        if (name != null) Name = name.Trim().Replace("'", "").ToLower();
+        if (directorName != null) DirectorName = directorName.Trim().Replace("'", "").ToLower();
     }
 }

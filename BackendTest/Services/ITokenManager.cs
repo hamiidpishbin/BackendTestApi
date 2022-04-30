@@ -3,7 +3,7 @@ using BackendTest.Models;
 
 namespace BackendTest.Services;
 
-public interface ITokenService
+public interface ITokenManager
 {
     Task<string> GenerateJwtToken(User user);
 }

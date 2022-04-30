@@ -2,31 +2,31 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using BackendTest.Models;
-using BackendTest.Repository.IRepository;
+using BackendTest.Repository;
 using Microsoft.IdentityModel.Tokens;
-using NuGet.Packaging;
 
 namespace BackendTest.Services;
 
-public class TokenService : ITokenService
+public class TokenManager : ITokenManager
 {
     private readonly IConfiguration _configuration;
-    private readonly IUserRolesRepo _userRolesRepo;
+    private readonly IUserRepo _userRepo;
 
     private const double ExpiryDurationMinutes = 60;
 
-    public  TokenService(IConfiguration configuration, IUserRolesRepo userRolesRepo)
+    public  TokenManager(IConfiguration configuration, IUserRepo userRepo)
     {
         _configuration = configuration;
-        _userRolesRepo = userRolesRepo;
+        _userRepo = userRepo;
     }
+    
     public async Task<string> GenerateJwtToken(User user)
     {
         var jwtKey = _configuration["JWT:Key"];
         var jwtIssuer = _configuration["JWT:Issuer"];
         var jwtAudience = _configuration["JWT:Audience"];
 
-        var userRoles = await _userRolesRepo.GetRoles(user.Id);
+        var userRoles = await _userRepo.GetRoles(user.Id);
 
         var claims = userRoles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
         claims.Add(new Claim("UserId", user.Id.ToString()));
@@ -34,7 +34,7 @@ public class TokenService : ITokenService
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));        
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);           
-        var tokenDescriptor = new JwtSecurityToken(jwtIssuer, jwtIssuer, claims, 
+        var tokenDescriptor = new JwtSecurityToken(jwtIssuer, jwtAudience, claims, 
             expires: DateTime.Now.AddMinutes(ExpiryDurationMinutes), signingCredentials: credentials);        
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);  
 

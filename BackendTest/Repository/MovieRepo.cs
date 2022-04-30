@@ -15,8 +15,6 @@ public class MovieRepo : IMovieRepo
     {
         _dapperContext = dapperContext;
     }
-
-    
     
     public async Task InsertMovieIntoDb(int userId, MovieDto movie)
     {
@@ -45,8 +43,174 @@ public class MovieRepo : IMovieRepo
         await InsertIntoMovieActorsTable(insertedMovie.Id, insertedActorsList, connection);
     }
     
+    public async Task<List<MovieInDbDto>> FindUserMovies(int userId)
+    {
+        var query =
+            @"SELECT UserMovies.UserId, UserMovies.MovieId, Movies.Name, Movies.[Year], Directors.Name AS 'DirectorName', Actors.Name AS 'ActorName' FROM UserMovies 
+            JOIN Movies ON UserMovies.MovieId = Movies.Id 
+            JOIN Directors ON Directors.Id = Movies.DirectorId 
+            JOIN MovieActors ON Movies.Id = MovieActors.MovieId
+            JOIN Actors ON Actors.Id = MovieActors.ActorId WHERE UserId = @userId";
+
+
+
+        var parameters = new DynamicParameters();
+        parameters.Add("userId", userId, DbType.Int32);
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var movies = await connection.QueryAsync<SingleRowMovie>(query, parameters);
+
+        var mergedMovies = MergeActorNames(movies);
+
+        return mergedMovies;
+    }
     
-    private async Task<MovieTableDto> InsertIntoMoviesTable(string movieName, int movieYear, int directorId, IDbConnection connection)
+    public async Task<MovieInDbDto> FindMovieById(int id)
+    {
+        var query = @"SELECT Movies.Id AS MovieId, Movies.Name, Movies.[Year], Directors.Name AS DirectorName, Actors.Name AS ActorName FROM Movies 
+                      LEFT JOIN Directors ON Directors.Id = Movies.DirectorId
+                      LEFT JOIN MovieActors ON Movies.Id = MovieActors.MovieId
+                      LEFT JOIN Actors ON MovieActors.ActorId = Actors.Id WHERE Movies.Id = @movieId";
+
+        var parameters = new DynamicParameters();
+        parameters.Add("movieId", id, DbType.Int32);
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var movies = await connection.QueryAsync<SingleRowMovie>(query, parameters);
+
+        if (!movies.Any()) return null;
+        
+        var movie = MergeActorNames(movies)[0];
+
+        return movie;
+    }
+    
+    public async Task UpdateMovieInDb(MovieInDbDto movieInDb, MovieDto movieForUpdate)
+    {
+        using var connection = _dapperContext.CreateConnection();
+
+        await UpdateMoviesAndDirectorsTables(movieInDb, movieForUpdate, connection);
+
+        await UpdateActorsAndMovieActorsTables(movieInDb.Id, movieForUpdate, connection);
+    }
+    
+    public async Task DeleteMovieFromDb(int userId, int movieId)
+    {
+        using var connection = _dapperContext.CreateConnection();
+
+        await AdminDeleteFromUserMoviesTable(movieId, connection);
+
+        await DeleteFromMoviesAndMovieActorsTables(movieId, connection);
+    }
+    
+    public async Task<IEnumerable<MovieInDbDto>> FindMoviesByYearRange(int startYear, int endYear)
+    {
+        var query = @"SELECT  Movies.Id AS MovieId, UserMovies.UserId, Movies.Name, Year, Directors.Name AS DirectorName, Actors.Name AS ActorName FROM Movies 
+                    LEFT JOIN Directors ON Movies.DirectorId = Directors.Id
+                    LEFT JOIN MovieActors ON Movies.Id = MovieActors.MovieId
+                    LEFT JOIN Actors ON Actors.Id = MovieActors.ActorId
+                    LEFT JOIN UserMovies ON Movies.Id = UserMovies.MovieId
+                    WHERE Year >= @startYear AND Year <= @endYear";
+
+        var parameters = new DynamicParameters();
+        parameters.Add("startYear", startYear, DbType.Int32);
+        parameters.Add("endYear", endYear, DbType.Int32);
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var moviesInDb = await connection.QueryAsync<SingleRowMovie>(query, parameters);
+
+        var movies = MergeActorNames(moviesInDb);
+
+        return movies;
+    }
+    
+    public async Task<IEnumerable<MovieInDbDto>> FindMovies(SearchParamsDto searchParams)
+    {
+        var query = @"SELECT  Movies.Id AS MovieId, UserMovies.UserId, Movies.Name, Year, Directors.Name AS DirectorName, Actors.Name AS ActorName FROM Movies 
+                    LEFT JOIN Directors ON Movies.DirectorId = Directors.Id
+                    LEFT JOIN MovieActors ON Movies.Id = MovieActors.MovieId
+                    LEFT JOIN Actors ON Actors.Id = MovieActors.ActorId
+                    LEFT JOIN UserMovies ON Movies.Id = UserMovies.MovieId WHERE";
+
+        var queryConditions = @"";
+
+        var parameters = new DynamicParameters();
+
+        if (searchParams.StartYear != null && searchParams.EndYear != null)
+        {
+            var yearRangeQuery = @" Year >= @startYear AND Year <= @endYear";
+            queryConditions += yearRangeQuery;
+            
+            parameters.Add("startYear", searchParams.StartYear, DbType.Int32);
+            parameters.Add("endYear", searchParams.EndYear, DbType.Int32);
+        }
+
+        if (searchParams.MovieName != null)
+        {
+            var movieNameQuery = string.IsNullOrWhiteSpace(queryConditions)
+                ? @" Movies.Name = @movieName"
+                : @" AND Movies.Name = @movieName";
+
+            queryConditions += movieNameQuery;
+            
+            parameters.Add("movieName", searchParams.MovieName, DbType.String);
+        }
+
+        if (searchParams.DirectorName != null)
+        {
+            var directorNameQuery = string.IsNullOrWhiteSpace(queryConditions)
+                ? @" Directors.Name = @directorName"
+                : @" AND Directors.Name = @directorName";
+
+            queryConditions += directorNameQuery;
+            
+            parameters.Add("directorName", searchParams.DirectorName);
+        }
+
+        if (searchParams.Actors.Any())
+        {
+            for (var i = 0; i < searchParams.Actors.Count; i++)
+            {
+                if (i == 0)
+                { 
+                    var actorsNameQuery = string.IsNullOrWhiteSpace(queryConditions)
+                        ? @" Actors.Name = @actorName"
+                        : @" AND Actors.Name = @actorName";
+
+                    queryConditions += actorsNameQuery;
+                    
+                    parameters.Add("actorName", searchParams.Actors[i], DbType.String);
+                }
+                else 
+                {
+                    var actorsNameQuery = string.IsNullOrWhiteSpace(queryConditions)
+                        ? $@" Actors.Name = @actorName{i}"
+                        : $@" OR Actors.Name = @actorName{i}";
+
+                    queryConditions += actorsNameQuery;
+                    
+                    parameters.Add($"actorName{i}", searchParams.Actors[i], DbType.String);
+                }
+            }
+        }
+
+        query += queryConditions;
+
+        Console.WriteLine(query);
+        
+        using var connection = _dapperContext.CreateConnection();
+
+        var rawMovies = await connection.QueryAsync<SingleRowMovie>(query, parameters);
+
+        var movies = MergeActorNames(rawMovies);
+
+        return movies;
+    }
+    
+    private async Task<MovieTable> InsertIntoMoviesTable(string movieName, int movieYear, int directorId, IDbConnection connection)
     {
         var query = @"INSERT INTO Movies (Name, Year, DirectorId) VALUES (@MovieName, @MovieYear, @DirectorId)" + "SELECT CAST(SCOPE_IDENTITY() as int)";
 
@@ -57,16 +221,16 @@ public class MovieRepo : IMovieRepo
 
         var createdMovieId = await connection.QuerySingleAsync<int>(query, parameters);
 
-        var createdMovie = new MovieTableDto()
+        var createdMovie = new MovieTable()
         {
             Id = createdMovieId,
             Name = movieName,
-            Year = movieYear
+            Year = movieYear,
+            DirectorId = directorId
         };
 
         return createdMovie;
     }
-    
     
     private async Task InsertIntoUserMoviesTable(int userId, int movieId, IDbConnection connection)
     {
@@ -79,24 +243,22 @@ public class MovieRepo : IMovieRepo
         await connection.ExecuteAsync(query, parameters);
     }
     
-
-    private async Task InsertIntoMovieActorsTable(int movieId, List<ActorDto> actors, IDbConnection connection)
+    private async Task InsertIntoMovieActorsTable(int movieId, List<Actor> actors, IDbConnection connection)
     {
         var query = @"INSERT INTO MovieActors (MovieId, ActorId) VALUES (@movieId, @actorId)";
 
         var parameters = new DynamicParameters();
 
-        foreach (var actorObj in actors)
+        foreach (var actor in actors)
         {
             parameters.Add("movieId", movieId, DbType.Int32);
-            parameters.Add("actorId", actorObj.Id, DbType.Int32);
+            parameters.Add("actorId", actor.Id, DbType.Int32);
 
             await connection.ExecuteAsync(query, parameters);
         }
     }
     
-    
-    private async Task<DirectorDto> InsertIntoDirectorsTable(string directorName, IDbConnection connection)
+    private async Task<Director> InsertIntoDirectorsTable(string directorName, IDbConnection connection)
     {
         var query = @"INSERT INTO Directors (Name) VALUES (@directorName)" + "SELECT CAST(SCOPE_IDENTITY() as int)";
 
@@ -105,27 +267,27 @@ public class MovieRepo : IMovieRepo
 
         var insertedDirectorId = await connection.QuerySingleAsync<int>(query, param);
 
-        var insertedDirector = new DirectorDto(directorName)
+        var insertedDirector = new Director
         {
-            Id = insertedDirectorId
+            Id = insertedDirectorId,
+            Name = directorName
         };
 
         return insertedDirector;
     }
-    
-    
-    private async Task<List<ActorDto>> FindActors(List<string> actors, IDbConnection connection)
-    {
-        var query = @"SELECT * FROM Actors WHERE Name = @ActorName";
 
-        var actorsInDbList = new List<ActorDto>();
+    private async Task<List<Actor>> FindActors(List<string> actors, IDbConnection connection)
+    {
+        var query = @"SELECT * FROM Actors WHERE Name = @actorName";
+
+        var actorsInDbList = new List<Actor>();
 
         foreach (var actorName in actors)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("ActorName", actorName, DbType.String);
+            parameters.Add("actorName", actorName, DbType.String);
             
-            var actorInDb = await connection.QueryFirstOrDefaultAsync<ActorDto>(query, parameters);
+            var actorInDb = await connection.QueryFirstOrDefaultAsync<Actor>(query, parameters);
 
             if (actorInDb != null)
             {
@@ -136,12 +298,11 @@ public class MovieRepo : IMovieRepo
         return actorsInDbList;
     }
     
-
-    private async Task<List<ActorDto>> InsertIntoActorsTable(List<string> actors, IDbConnection connection)
+    private async Task<List<Actor>> InsertIntoActorsTable(List<string> actors, IDbConnection connection)
     {
         var actorsInDb = await FindActors(actors, connection);
 
-        var actorsList = new List<ActorDto>();
+        var actorsList = new List<Actor>();
 
         foreach (var actorObj in actorsInDb)
         {
@@ -159,59 +320,34 @@ public class MovieRepo : IMovieRepo
 
             var newActorId = await connection.QuerySingleAsync<int>(query, parameters);
 
-            var newActor = new ActorDto(actorName) {Id = newActorId};
+            var newActor = new Actor
+            {
+                Id = newActorId,
+                Name = actorName
+            };
+            
             actorsList.Add(newActor);
         }
 
         return actorsList;
     }
     
-
-    public async Task<List<MovieInDbDto>> FindUserMovies(int userId)
-    {
-        var query =
-            @"SELECT UserMovies.UserId, UserMovies.MovieId, Movies.Name, Movies.[Year], Directors.Name AS 'DirectorName', Actors.Name AS 'ActorName' FROM UserMovies 
-            JOIN Movies ON UserMovies.MovieId = Movies.Id 
-            JOIN Directors ON Directors.Id = Movies.DirectorId 
-            JOIN MovieActors ON Movies.Id = MovieActors.MovieId
-            JOIN Actors ON Actors.Id = MovieActors.ActorId WHERE UserId = @userId";
-
-
-
-        var parameters = new DynamicParameters();
-        parameters.Add("userId", userId, DbType.Int32);
-
-        using var connection = _dapperContext.CreateConnection();
-
-        var movies = await connection.QueryAsync<UserMovieFromDbDto>(query, parameters);
-
-        var mergedMovies = MergeActorNames(movies);
-
-        return mergedMovies;
-    }
-    
-
-    public async Task UpdateMovieInDb(MovieInDbDto movieInDb, MovieDto movieForUpdate)
-    {
-        using var connection = _dapperContext.CreateConnection();
-
-        await UpdateMoviesAndDirectorsTables(movieInDb, movieForUpdate, connection);
-
-        await UpdateActorsAndMovieActorsTables(movieInDb.Id, movieForUpdate, connection);
-    }
-    
-    
     private async Task UpdateMoviesAndDirectorsTables(MovieInDbDto movieInDb, MovieDto movie, IDbConnection connection)
     {
         var directorInDb = await FindDirectorByName(movie.DirectorName, connection);
-        
-        async Task<int> DirectorId()
+
+        int directorId;
+        if (directorInDb != null)
         {
-            if (directorInDb != null) return directorInDb.Id;
-            
-            var insertedDirector = await InsertIntoDirectorsTable(movie.DirectorName, connection);
-            return insertedDirector.Id;
+            directorId = directorInDb.Id;
         }
+        else
+        {
+            var insertedDirector = await InsertIntoDirectorsTable(movie.DirectorName, connection);
+            directorId = insertedDirector.Id;
+        }
+        
+        
 
         var moviesTableHasChanges = movie.Name != movieInDb.Name || movie.Year != movieInDb.Year ||
                                    movie.DirectorName != directorInDb.Name;
@@ -226,15 +362,14 @@ public class MovieRepo : IMovieRepo
             var parameters = new DynamicParameters();
             parameters.Add("movieName", movie.Name != movieInDb.Name ? movie.Name : movieInDb.Name, DbType.String);
             parameters.Add("movieYear", movie.Year != movieInDb.Year ? movie.Year : movieInDb.Year, DbType.Int32);
-            parameters.Add("directorId", await DirectorId(), DbType.Int32);
+            parameters.Add("directorId", directorId, DbType.Int32);
             parameters.Add("movieId", movieInDb.Id, DbType.Int32);
 
             await connection.ExecuteAsync(query, parameters);
 
         }
     }
-
-
+    
     private async Task UpdateActorsAndMovieActorsTables(int movieId, MovieDto movie, IDbConnection connection)
     {
         var newActors = await InsertIntoActorsTable(movie.Actors, connection);
@@ -266,7 +401,7 @@ public class MovieRepo : IMovieRepo
         return actors;
     }
 
-    private List<MovieInDbDto> MergeActorNames(IEnumerable<UserMovieFromDbDto> movies)
+    private List<MovieInDbDto> MergeActorNames(IEnumerable<SingleRowMovie> movies)
     {
         var movieDictionary = new Dictionary<int, MovieInDbDto>();
 
@@ -293,51 +428,17 @@ public class MovieRepo : IMovieRepo
         return movieDictionary.Values.ToList();
     }
     
-
-    public async Task<MovieInDbDto> FindMovieById(int id)
-    {
-        var query = @"SELECT Movies.Id AS MovieId, Movies.Name, Movies.[Year], Directors.Name AS DirectorName, Actors.Name AS ActorName FROM Movies 
-                      LEFT JOIN Directors ON Directors.Id = Movies.DirectorId
-                      LEFT JOIN MovieActors ON Movies.Id = MovieActors.MovieId
-                      LEFT JOIN Actors ON MovieActors.ActorId = Actors.Id WHERE Movies.Id = @movieId";
-
-        var parameters = new DynamicParameters();
-        parameters.Add("movieId", id, DbType.Int32);
-
-        using var connection = _dapperContext.CreateConnection();
-
-        var movies = await connection.QueryAsync<UserMovieFromDbDto>(query, parameters);
-
-        if (!movies.Any()) return null;
-        
-        var movie = MergeActorNames(movies)[0];
-
-        return movie;
-    }
-
-
-    private async Task<DirectorDto> FindDirectorByName(string directorName, IDbConnection connection)
+    private async Task<Director> FindDirectorByName(string directorName, IDbConnection connection)
     {
         var query = @"SELECT * FROM Directors WHERE Name = @directorName";
 
         var parameters = new DynamicParameters();
         parameters.Add("directorName", directorName, DbType.String);
 
-        var director = await connection.QueryFirstOrDefaultAsync<DirectorDto>(query, parameters);
+        var director = await connection.QueryFirstOrDefaultAsync<Director>(query, parameters);
 
         return director;
     }
-    
-    
-    public async Task DeleteMovieFromDb(int userId, int movieId)
-    {
-        using var connection = _dapperContext.CreateConnection();
-
-        await AdminDeleteFromUserMoviesTable(movieId, connection);
-
-        await DeleteFromMoviesAndMovieActorsTables(movieId, connection);
-    }
-
 
     private async Task DeleteFromMoviesAndMovieActorsTables(int movieId, IDbConnection connection)
     {
@@ -360,7 +461,6 @@ public class MovieRepo : IMovieRepo
         await connection.ExecuteAsync(query, parameters);
     }
     
-    
     private async Task AdminDeleteFromUserMoviesTable(int movieId, IDbConnection connection)
     {
         var query = @"DELETE FROM UserMovies WHERE MovieId = @movieId";
@@ -369,28 +469,5 @@ public class MovieRepo : IMovieRepo
         parameters.Add("movieId", movieId, DbType.Int32);
 
         await connection.ExecuteAsync(query, parameters);
-    }
-    
-    
-    public async Task<IEnumerable<MovieInDbDto>> FindMoviesByYearRange(int startYear, int endYear)
-    {
-        var query = @"SELECT  Movies.Id AS MovieId, UserMovies.UserId, Movies.Name, Year, Directors.Name AS DirectorName, Actors.Name AS ActorName FROM Movies 
-                    LEFT JOIN Directors ON Movies.DirectorId = Directors.Id
-                    LEFT JOIN MovieActors ON Movies.Id = MovieActors.MovieId
-                    LEFT JOIN Actors ON Actors.Id = MovieActors.ActorId
-                    LEFT JOIN UserMovies ON Movies.Id = UserMovies.MovieId
-                    WHERE Year >= @startYear AND Year <= @endYear";
-
-        var parameters = new DynamicParameters();
-        parameters.Add("startYear", startYear, DbType.Int32);
-        parameters.Add("endYear", endYear, DbType.Int32);
-
-        using var connection = _dapperContext.CreateConnection();
-
-        var moviesInDb = await connection.QueryAsync<UserMovieFromDbDto>(query, parameters);
-
-        var movies = MergeActorNames(moviesInDb);
-
-        return movies;
     }
 }

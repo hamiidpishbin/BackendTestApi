@@ -1,4 +1,4 @@
-using Microsoft.Build.Framework;
+using System.ComponentModel.DataAnnotations;
 
 namespace BackendTest.Dtos;
 
@@ -14,11 +14,15 @@ public class MovieDto
     public string DirectorName { get; }
 
     [Required]
-    public List<string> Actors { get; set; }
+    public List<string> Actors { get; }
 
-    public MovieDto(string name, string directorName)
+    public MovieDto(string name, string directorName, List<string> actors)
     {
-        if (name != null) Name = name.Trim().Replace("'", "").ToLower();
-        if (directorName != null) DirectorName = directorName.Trim().Replace("'", "").ToLower();
+        if (string.IsNullOrWhiteSpace(name)) Name = name.Trim().Replace("'", "").ToLower();
+        if (string.IsNullOrWhiteSpace(directorName)) DirectorName = directorName.Trim().Replace("'", "").ToLower();
+        if (actors != null && actors.Any())
+        {
+            Actors = actors.Select(actor => actor.Trim().Replace("'", "").ToLower()).ToList();
+        }
     }
 }

@@ -6,14 +6,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/BackendTest/Services/ISearchParamsValidator.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackendTest/Services/SearchParamsValidator.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/AdminController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/AdminController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/SearchParamsDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Dtos/SearchParamsDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/TestDto.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Repository/IMovieRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/IMovieRepo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/appsettings.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,7 +111,7 @@
       <workItem from="1650545736226" duration="18431000" />
       <workItem from="1650719994121" duration="12487000" />
       <workItem from="1650779657525" duration="61231000" />
-      <workItem from="1651035888318" duration="65770000" />
+      <workItem from="1651035888318" duration="75480000" />
     </task>
     <servers />
   </component>
@@ -138,5 +135,24 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs</url>
+          <line>213</line>
+          <properties documentPath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" initialLine="230" containingFunctionPresentation="method 'FindMovieIdByActorsList'">
+            <startOffsets>
+              <option value="7633" />
+            </startOffsets>
+            <endOffsets>
+              <option value="7870" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

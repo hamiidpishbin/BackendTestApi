@@ -20,7 +20,6 @@ builder.Services.AddTransient<ITokenManager, TokenManager>();
 builder.Services.AddTransient<IUserManager, UserManager>();
 builder.Services.AddTransient<IMovieRepo, MovieRepo>();
 builder.Services.AddTransient<ISearchParamsValidator, SearchParamsValidator>();
-// builder.Services.AddSingleton<ISearchParamsValidator>(new SearchParamsValidator(new SearchParamsDto()));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

@@ -114,7 +114,7 @@ public class MovieRepo : IMovieRepo
         await DeleteFromMoviesTable(movieId, connection);
     }
     
-    public async Task<IEnumerable<MovieInDbDto>> FindMovies(SearchParamsDto searchParams)
+    public async Task<IEnumerable<MovieInDbDto>> SearchMovies(SearchParamsDto searchParams)
     {
         var query = @"SELECT  Movies.Id AS MovieId, UserMovies.UserId, Movies.Name, Year, Directors.Name AS DirectorName, Actors.Name AS ActorName FROM Movies 
                     LEFT JOIN Directors ON Movies.DirectorId = Directors.Id
@@ -125,10 +125,41 @@ public class MovieRepo : IMovieRepo
         var queryConditions = @"";
 
         var parameters = new DynamicParameters();
+        
+        if (_searchParamsValidator.IsActorsListValid(searchParams))
+        {
+            var movieIdList = await FindMovieIdByActorsList(searchParams.Actors);
+
+            string actorsNameQuery = null;
+
+            for (var i = 0; i < movieIdList.Count; i++)
+            {
+                if (i == 0)
+                {
+                    var subQuery = @"Movies.id = @movieId";
+
+                    actorsNameQuery += subQuery;
+                    
+                    parameters.Add("movieId", movieIdList[i], DbType.String);
+                }
+                else
+                {
+                    var subQuery = $@" OR Movies.Id = @movieId{i}";
+                    
+                    actorsNameQuery += subQuery;
+                    
+                    parameters.Add($"movieId{i}", movieIdList[i], DbType.String);
+                }
+            }
+
+            queryConditions += $" ({actorsNameQuery})";
+        }
 
         if (_searchParamsValidator.IsYearRangeValid(searchParams))
         {
-            var yearRangeQuery = @" Year >= @startYear AND Year <= @endYear";
+            var yearRangeQuery = string.IsNullOrWhiteSpace(queryConditions)
+                ? @" (Year >= @startYear AND Year <= @endYear)"
+                : @" AND (Year >= @startYear AND Year <= @endYear)";
             queryConditions += yearRangeQuery;
             
             parameters.Add("startYear", searchParams.StartYear, DbType.Int32);
@@ -157,36 +188,11 @@ public class MovieRepo : IMovieRepo
             parameters.Add("directorName", searchParams.DirectorName);
         }
 
-        if (_searchParamsValidator.IsActorsListValid(searchParams))
-        {
-            for (var i = 0; i < searchParams.Actors.Count; i++)
-            {
-                if (i == 0)
-                { 
-                    var actorsNameQuery = string.IsNullOrWhiteSpace(queryConditions)
-                        ? @" Actors.Name = @actorName"
-                        : @" AND Actors.Name = @actorName";
-
-                    queryConditions += actorsNameQuery;
-                    
-                    parameters.Add("actorName", searchParams.Actors[i], DbType.String);
-                }
-                else 
-                {
-                    var actorsNameQuery = string.IsNullOrWhiteSpace(queryConditions)
-                        ? $@" Actors.Name = @actorName{i}"
-                        : $@" OR Actors.Name = @actorName{i}";
-
-                    queryConditions += actorsNameQuery;
-                    
-                    parameters.Add($"actorName{i}", searchParams.Actors[i], DbType.String);
-                }
-            }
-        }
-
         try
         {
             query += queryConditions;
+
+            Console.WriteLine(query);
             
             using var connection = _dapperContext.CreateConnection();
 
@@ -201,6 +207,48 @@ public class MovieRepo : IMovieRepo
             Console.WriteLine(exception);
             return null;
         }
+    }
+
+    private async Task<List<int>> FindMovieIdByActorsList(List<string> actors)
+    {
+        var query =
+            $@"SELECT Movies.Id, Movies.Name FROM Movies 
+            LEFT JOIN MovieActors ON Movies.Id = MovieActors.MovieId 
+            LEFT JOIN Actors ON MovieActors.ActorId = Actors.Id WHERE Actors.Name = @firstActor";
+
+        var parameters = new DynamicParameters();
+        parameters.Add("firstActor", actors[0], DbType.String);
+
+        var queryConditions = @"";
+
+        for (int i = 0; i < actors.Count; i++)
+        {
+            if (i > 0)
+            {
+                queryConditions += @" OR Actors.Name = @nextActor";
+                parameters.Add("nextActor", actors[i], DbType.String);
+            }
+        }
+
+        query += queryConditions;
+
+        using var connection = _dapperContext.CreateConnection();
+
+        var result = await connection.QueryAsync(query, parameters);
+
+        // Console.WriteLine(result);
+
+        var MovieIdList = new List<int>();
+
+        foreach (var resultObj in result)
+        {
+            if (!MovieIdList.Contains(resultObj.Id))
+            {
+                MovieIdList.Add(resultObj.Id);
+            }
+        }
+
+        return MovieIdList;
     }
 
     private async Task<MovieTable> InsertIntoMoviesTable(string movieName, int movieYear, int directorId, IDbConnection connection)

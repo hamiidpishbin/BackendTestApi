@@ -12,16 +12,18 @@ namespace BackendTest.Controllers
     {
         private readonly IUserRepo _userRepo;
         private readonly IMovieRepo _movieRepo;
+        private readonly int _paginationSize;
 
-        public AdminController(IUserRepo userRepo, IMovieRepo movieRepo)
+        public AdminController(IUserRepo userRepo, IMovieRepo movieRepo, IConfiguration configuration)
         {
             _userRepo = userRepo;
             _movieRepo = movieRepo;
+            _paginationSize = Convert.ToInt32(configuration["PaginationSize"]);
         }
         
         
         [HttpGet("users")]
-        public async Task<IActionResult> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers([FromQuery] int page = 1)
         {
             try
             {
@@ -29,7 +31,7 @@ namespace BackendTest.Controllers
 
                 if (!users.Any()) return BadRequest("No user is registered yet");
 
-                return Ok(users);
+                return Ok(page > 1 ? users.Skip(_paginationSize * page).Take(_paginationSize) : users.Take(_paginationSize));
             }
             catch (Exception exception)
             {
@@ -176,11 +178,11 @@ namespace BackendTest.Controllers
         
 
         [HttpGet("movies/search")]
-        public async Task<IActionResult> SearchMovies([FromBody] SearchParamsDto searchParams)
+        public async Task<IActionResult> SearchMovie([FromBody] SearchParamsDto searchParams)
         {
             try
             {
-                var movies = await _movieRepo.FindMovies(searchParams);
+                var movies = await _movieRepo.SearchMovies(searchParams);
 
                 return Ok(movies);
             }

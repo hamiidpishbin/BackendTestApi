@@ -122,10 +122,7 @@ namespace BackendTest.Controllers
                 {
                     var userMovies = await _movieRepo.FindUserMovies(user.Id);
 
-                    foreach (var userMovie in userMovies)
-                    {
-                        userMovieList.Add(userMovie);
-                    }
+                    userMovieList.AddRange(userMovies);
                 }
 
                 return Ok(userMovieList);
@@ -179,7 +176,7 @@ namespace BackendTest.Controllers
         
 
         [HttpGet("movies/search")]
-        public async Task<IActionResult> GetMoviesByName([FromBody] SearchParamsDto searchParams)
+        public async Task<IActionResult> SearchMovies([FromBody] SearchParamsDto searchParams)
         {
             try
             {

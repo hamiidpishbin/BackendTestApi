@@ -1,6 +1,7 @@
 using System.Data;
 using BackendTest.Data;
 using BackendTest.Dtos;
+using BackendTest.Services;
 using Dapper;
 using Microsoft.Data.SqlClient;
 
@@ -10,10 +11,12 @@ namespace BackendTest.Repository;
 public class MovieRepo : IMovieRepo
 {
     private readonly DapperContext _dapperContext;
+    private readonly ISearchParamsValidator _searchParamsValidator;
 
-    public MovieRepo(DapperContext dapperContext)
+    public MovieRepo(DapperContext dapperContext, ISearchParamsValidator searchParamsValidator)
     {
         _dapperContext = dapperContext;
+        _searchParamsValidator = searchParamsValidator;
     }
     
     public async Task InsertMovieIntoDb(int userId, MovieDto movie)
@@ -123,7 +126,7 @@ public class MovieRepo : IMovieRepo
 
         var parameters = new DynamicParameters();
 
-        if (searchParams.StartYear != null && searchParams.EndYear != null)
+        if (_searchParamsValidator.IsYearRangeValid(searchParams))
         {
             var yearRangeQuery = @" Year >= @startYear AND Year <= @endYear";
             queryConditions += yearRangeQuery;
@@ -132,7 +135,7 @@ public class MovieRepo : IMovieRepo
             parameters.Add("endYear", searchParams.EndYear, DbType.Int32);
         }
 
-        if (searchParams.MovieName != null)
+        if (_searchParamsValidator.IsMovieNameValid(searchParams))
         {
             var movieNameQuery = string.IsNullOrWhiteSpace(queryConditions)
                 ? @" Movies.Name = @movieName"
@@ -143,7 +146,7 @@ public class MovieRepo : IMovieRepo
             parameters.Add("movieName", searchParams.MovieName, DbType.String);
         }
 
-        if (searchParams.DirectorName != null)
+        if (_searchParamsValidator.IsDirectorNameValid(searchParams))
         {
             var directorNameQuery = string.IsNullOrWhiteSpace(queryConditions)
                 ? @" Directors.Name = @directorName"
@@ -154,7 +157,7 @@ public class MovieRepo : IMovieRepo
             parameters.Add("directorName", searchParams.DirectorName);
         }
 
-        if (searchParams.Actors.Any())
+        if (_searchParamsValidator.IsActorsListValid(searchParams))
         {
             for (var i = 0; i < searchParams.Actors.Count; i++)
             {
@@ -181,19 +184,25 @@ public class MovieRepo : IMovieRepo
             }
         }
 
-        query += queryConditions;
+        try
+        {
+            query += queryConditions;
+            
+            using var connection = _dapperContext.CreateConnection();
 
-        Console.WriteLine(query);
-        
-        using var connection = _dapperContext.CreateConnection();
+            var rawMovies = await connection.QueryAsync<SingleRowMovie>(query, parameters);
 
-        var rawMovies = await connection.QueryAsync<SingleRowMovie>(query, parameters);
+            var movies = MergeActorNames(rawMovies);
 
-        var movies = MergeActorNames(rawMovies);
-
-        return movies;
+            return movies;
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine(exception);
+            return null;
+        }
     }
-    
+
     private async Task<MovieTable> InsertIntoMoviesTable(string movieName, int movieYear, int directorId, IDbConnection connection)
     {
         var query = @"INSERT INTO Movies (Name, Year, DirectorId) VALUES (@MovieName, @MovieYear, @DirectorId)" + "SELECT CAST(SCOPE_IDENTITY() as int)";

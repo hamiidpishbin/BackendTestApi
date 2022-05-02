@@ -10,9 +10,15 @@ public class SearchParamsDto
     public List<string>? Actors { get; set; }
     
 
-    public SearchParamsDto(string movieName, string directorName)
+    public SearchParamsDto(string movieName, string directorName, List<string> actors)
     {
-        if (movieName != null) MovieName = movieName.Trim().ToLower();
-        if (directorName != null) DirectorName = directorName.Trim().ToLower();
+        if (movieName != null) MovieName = movieName.Trim().Replace("'","").ToLower();
+        
+        if (directorName != null) DirectorName = directorName.Trim().Replace("'","").ToLower();
+
+        if (actors != null && actors.Any())
+        {
+            Actors = actors.Select(actor => actor.Trim().Replace("'", "").ToLower()).ToList();
+        }
     }
 }

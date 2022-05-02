@@ -7,7 +7,6 @@
   <component name="ChangeListManager">
     <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,7 +108,7 @@
       <workItem from="1650545736226" duration="18431000" />
       <workItem from="1650719994121" duration="12487000" />
       <workItem from="1650779657525" duration="61231000" />
-      <workItem from="1651035888318" duration="79814000" />
+      <workItem from="1651035888318" duration="82757000" />
     </task>
     <servers />
   </component>
@@ -149,19 +148,6 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="26" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs</url>
-          <line>19</line>
-          <properties documentPath="$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs" initialLine="19" containingFunctionPresentation="constructor 'MovieDto'">
-            <startOffsets>
-              <option value="431" />
-            </startOffsets>
-            <endOffsets>
-              <option value="432" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="27" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

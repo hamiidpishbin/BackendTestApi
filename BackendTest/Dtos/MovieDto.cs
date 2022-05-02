@@ -18,13 +18,11 @@ public class MovieDto
 
     public MovieDto(string name, string directorName, List<string> actors)
     {
-        if (string.IsNullOrWhiteSpace(name)) Name = name.Trim().Replace("'", "").ToLower();
+        if (!string.IsNullOrWhiteSpace(name)) Name = name.Trim().Replace("'", "").ToLower();
         
-        if (string.IsNullOrWhiteSpace(directorName)) DirectorName = directorName.Trim().Replace("'", "").ToLower();
-        
-        if (actors != null && actors.Any())
-        {
-            Actors = actors.Select(actor => actor.Trim().Replace("'", "").ToLower()).Where(actor => actor != "").ToList();
-        }
+        if (!string.IsNullOrWhiteSpace(directorName)) DirectorName = directorName.Trim().Replace("'", "").ToLower();
+
+        if (actors == null || !actors.Any()) return;
+        Actors = actors.Select(actor => actor.Trim().Replace("'", "").ToLower()).Where(actor => actor != "").ToList();
     }
 }

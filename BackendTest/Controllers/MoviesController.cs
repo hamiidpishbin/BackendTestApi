@@ -36,19 +36,19 @@ namespace BackendTest.Controllers
         [HttpPost("add-movie")]
         public async Task<IActionResult> AddMovie(MovieDto movie)
         {
-            if (string.IsNullOrWhiteSpace(movie.Name)) return BadRequest("Name of the movie cannot be empty");
-
-            if (string.IsNullOrWhiteSpace(movie.DirectorName)) return BadRequest("Director Name cannot be empty");
-
-            if (!movie.Actors.Any()) return BadRequest("List of actors cannot be empty");
-
-            if (movie.Actors.Any(string.IsNullOrWhiteSpace)) return BadRequest("Actor name cannot be empty");
+            // if (string.IsNullOrWhiteSpace(movie.Name)) return BadRequest("Name of the movie cannot be empty");
+            //
+            // if (string.IsNullOrWhiteSpace(movie.DirectorName)) return BadRequest("Director Name cannot be empty");
+            //
+            // if (!movie.Actors.Any()) return BadRequest("List of actors cannot be empty");
+            //
+            // if (movie.Actors.Any(string.IsNullOrWhiteSpace)) return BadRequest("Actor name cannot be empty");
 
             try
             {
                 var userMovies = await _movieRepo.FindUserMovies(UserId);
                 
-                if (userMovies.Any(movieInDb => movieInDb.Name == movie.Name))
+                if (userMovies.Any(userMovieInDb => userMovieInDb.Name == movie.Name))
                 {
                     return BadRequest("A movie with this name already exists.");
                 }

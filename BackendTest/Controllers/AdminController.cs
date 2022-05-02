@@ -90,7 +90,7 @@ namespace BackendTest.Controllers
         }
         
 
-        [HttpPut("edit-user/{id}")]
+        [HttpPut("update-user/{id}")]
         public async Task<IActionResult> EditUser(int id, UserDto user)
         {
             try

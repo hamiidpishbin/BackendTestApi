@@ -70,13 +70,12 @@ public class UserRepo : IUserRepo
     
     public async Task<User> FindUserById(int id)
     {
-        var query = @"SELECT * FROM Users WHERE Id = @UserId";
+        var query = @"SELECT * FROM Users WHERE Id = @userId";
 
         using var connection = _dapperContext.CreateConnection();
 
         var parameters = new DynamicParameters();
-        parameters.Add("UserId", 
-            id, DbType.Int32);
+        parameters.Add("userId", id, DbType.Int32);
 
         var user = await connection.QuerySingleOrDefaultAsync<User>(query, parameters);
         

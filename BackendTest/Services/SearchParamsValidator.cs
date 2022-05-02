@@ -12,16 +12,22 @@ public class SearchParamsValidator : ISearchParamsValidator
 
     public bool IsMovieNameValid(SearchParamsDto searchParams)
     {
+        searchParams.MovieName = searchParams.MovieName?.Trim().Replace("'", "").ToLower();
         return !string.IsNullOrWhiteSpace(searchParams.MovieName);
     }
 
     public bool IsDirectorNameValid(SearchParamsDto searchParams)
     {
+        searchParams.DirectorName = searchParams.DirectorName?.Trim().Replace("'", "").ToLower();
         return !string.IsNullOrWhiteSpace(searchParams.DirectorName);
     }
 
     public bool IsActorsListValid(SearchParamsDto searchParams)
     {
-        return searchParams.Actors != null && searchParams.Actors.Any();
+        if (searchParams.Actors == null) return false;
+        
+        searchParams.Actors = searchParams.Actors.Select(actor => actor.Trim().Replace("'", "").ToLower()).Where(actor => actor != "").ToList();
+
+        return searchParams.Actors.Any();
     }
 }

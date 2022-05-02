@@ -7,6 +7,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/SearchParamsDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Dtos/SearchParamsDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Services/SearchParamsValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Services/SearchParamsValidator.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,7 +110,7 @@
       <workItem from="1650545736226" duration="18431000" />
       <workItem from="1650719994121" duration="12487000" />
       <workItem from="1650779657525" duration="61231000" />
-      <workItem from="1651035888318" duration="82757000" />
+      <workItem from="1651035888318" duration="87614000" />
     </task>
     <servers />
   </component>

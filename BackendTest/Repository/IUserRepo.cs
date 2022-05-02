@@ -5,7 +5,7 @@ namespace BackendTest.Repository;
 
 public interface IUserRepo
 {
-    Task<IEnumerable<User>> FindAllUsers();
+    Task<List<User>> FindAllUsers();
     Task<User> CreateUser(UserDto user);
     Task<User> FindUserByUsername(string username);
     Task<User> FindUserById(int id);

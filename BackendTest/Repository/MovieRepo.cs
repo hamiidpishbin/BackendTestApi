@@ -130,29 +130,32 @@ public class MovieRepo : IMovieRepo
         {
             var movieIdList = await FindMovieIdByActorsList(searchParams.Actors);
 
-            string actorsNameQuery = null;
-
-            for (var i = 0; i < movieIdList.Count; i++)
+            if (movieIdList.Any())
             {
-                if (i == 0)
-                {
-                    var subQuery = @"Movies.id = @movieId";
+                string actorsNameQuery = null;
 
-                    actorsNameQuery += subQuery;
-                    
-                    parameters.Add("movieId", movieIdList[i], DbType.String);
-                }
-                else
+                for (var i = 0; i < movieIdList.Count; i++)
                 {
-                    var subQuery = $@" OR Movies.Id = @movieId{i}";
+                    if (i == 0)
+                    {
+                        var subQuery = @"Movies.id = @movieId";
+
+                        actorsNameQuery += subQuery;
                     
-                    actorsNameQuery += subQuery;
+                        parameters.Add("movieId", movieIdList[i], DbType.String);
+                    }
+                    else
+                    {
+                        var subQuery = $@" OR Movies.Id = @movieId{i}";
                     
-                    parameters.Add($"movieId{i}", movieIdList[i], DbType.String);
+                        actorsNameQuery += subQuery;
+                    
+                        parameters.Add($"movieId{i}", movieIdList[i], DbType.String);
+                    }
                 }
+
+                queryConditions += $" ({actorsNameQuery})";   
             }
-
-            queryConditions += $" ({actorsNameQuery})";
         }
 
         if (_searchParamsValidator.IsYearRangeValid(searchParams))
@@ -235,9 +238,7 @@ public class MovieRepo : IMovieRepo
         using var connection = _dapperContext.CreateConnection();
 
         var result = await connection.QueryAsync(query, parameters);
-
-        // Console.WriteLine(result);
-
+        
         var MovieIdList = new List<int>();
 
         foreach (var resultObj in result)

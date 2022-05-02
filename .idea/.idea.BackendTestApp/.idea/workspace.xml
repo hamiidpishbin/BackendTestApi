@@ -7,8 +7,11 @@
   <component name="ChangeListManager">
     <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/SearchParamsDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Dtos/SearchParamsDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Services/SearchParamsValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Services/SearchParamsValidator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/AdminController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/AdminController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Dtos/MovieDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Repository/IUserRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/IUserRepo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Repository/UserRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/UserRepo.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,7 +113,7 @@
       <workItem from="1650545736226" duration="18431000" />
       <workItem from="1650719994121" duration="12487000" />
       <workItem from="1650779657525" duration="61231000" />
-      <workItem from="1651035888318" duration="87614000" />
+      <workItem from="1651035888318" duration="90100000" />
     </task>
     <servers />
   </component>
@@ -140,16 +143,16 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs</url>
-          <line>213</line>
-          <properties documentPath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" initialLine="230" containingFunctionPresentation="method 'FindMovieIdByActorsList'">
+          <line>132</line>
+          <properties documentPath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" initialLine="132" containingFunctionPresentation="method 'SearchMovies'">
             <startOffsets>
-              <option value="7633" />
+              <option value="4957" />
             </startOffsets>
             <endOffsets>
-              <option value="7870" />
+              <option value="4980" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="26" />
+          <option name="timeStamp" value="34" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

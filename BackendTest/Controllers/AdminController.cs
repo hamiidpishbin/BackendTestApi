@@ -31,7 +31,11 @@ namespace BackendTest.Controllers
 
                 if (!users.Any()) return BadRequest("No user is registered yet");
 
-                return Ok(page > 1 ? users.Skip(_paginationSize * page).Take(_paginationSize) : users.Take(_paginationSize));
+                var paginatedUserList = page > 1
+                    ? users.Skip(_paginationSize * page).Take(_paginationSize)
+                    : users.Take(_paginationSize); 
+
+                return Ok(new {totalUsers = users.Count, users = paginatedUserList});
             }
             catch (Exception exception)
             {

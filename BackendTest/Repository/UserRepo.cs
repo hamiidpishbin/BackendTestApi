@@ -17,7 +17,7 @@ public class UserRepo : IUserRepo
         _dapperContext = dapperContext;
     }
     
-    public async Task<IEnumerable<User>> FindAllUsers()
+    public async Task<List<User>> FindAllUsers()
     {
         var query = @"SELECT * FROM Users";
         
@@ -25,7 +25,7 @@ public class UserRepo : IUserRepo
 
         var users = await connection.QueryAsync<User>(query);
 
-        return users;
+        return users.ToList();
     }
 
     public async Task<User> CreateUser(UserDto user)

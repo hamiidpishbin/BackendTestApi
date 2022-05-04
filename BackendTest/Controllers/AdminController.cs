@@ -56,7 +56,7 @@ namespace BackendTest.Controllers
                 
                 var createdUser = await _userRepo.CreateUser(user);
 
-                return Ok(new {createdUser.Id, createdUser.Username});
+                return Ok(createdUser);
             }
             catch (Exception exception)
             {

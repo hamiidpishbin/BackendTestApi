@@ -28,7 +28,7 @@ public class UserRepo : IUserRepo
         return users.ToList();
     }
 
-    public async Task<User> CreateUser(UserDto user)
+    public async Task<CreatedUserDto> CreateUser(UserDto user)
     {
         var query = @"INSERT INTO Users (Username, Password) VALUES (@username, @password)" + @"SELECT CAST(SCOPE_IDENTITY() as int)";
 
@@ -42,11 +42,10 @@ public class UserRepo : IUserRepo
 
         var createdUserId = await connection.QuerySingleAsync<int>(query, parameters);
 
-        var createdUser = new User
+        var createdUser = new CreatedUserDto()
         {
             Id = createdUserId,
-            Username = user.Username,
-            Password = hashedPassword
+            Username = user.Username
         };
 
         await AssignUserRole(createdUserId, connection);

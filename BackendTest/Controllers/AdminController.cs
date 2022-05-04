@@ -12,13 +12,13 @@ namespace BackendTest.Controllers
     {
         private readonly IUserRepo _userRepo;
         private readonly IMovieRepo _movieRepo;
-        private readonly int _paginationSize;
+        private readonly int _pageSize;
 
         public AdminController(IUserRepo userRepo, IMovieRepo movieRepo, IConfiguration configuration)
         {
             _userRepo = userRepo;
             _movieRepo = movieRepo;
-            _paginationSize = Convert.ToInt32(configuration["PaginationSize"]);
+            _pageSize = Convert.ToInt32(configuration["PaginationSize"]);
         }
         
         
@@ -32,14 +32,15 @@ namespace BackendTest.Controllers
                 if (!users.Any()) return BadRequest("No user is registered yet");
 
                 var paginatedUserList = page > 1
-                    ? users.Skip(_paginationSize * page).Take(_paginationSize)
-                    : users.Take(_paginationSize); 
-
-                return Ok(new {totalUsers = users.Count, users = paginatedUserList});
+                    ? users.Skip(_pageSize * page).Take(_pageSize)
+                    : users.Take(_pageSize);
+                
+                return Ok(new {numberOfUsers = users.Count, numberOfPages = users.Count / _pageSize,  users = paginatedUserList});
             }
             catch (Exception exception)
             {
-                return Problem(exception.Message);
+                Console.WriteLine(exception.Message);
+                return Problem("Something went wrong");
             }
         }
 
@@ -51,18 +52,16 @@ namespace BackendTest.Controllers
             {
                 var duplicateUser = await _userRepo.FindUserByUsername(user.Username);
 
-                if (duplicateUser != null)
-                {
-                    return BadRequest("Username is already taken");
-                }
+                if (duplicateUser != null) return BadRequest("Username has already been taken");
                 
                 var createdUser = await _userRepo.CreateUser(user);
 
-                return Ok(createdUser);
+                return Ok(new {createdUser.Id, createdUser.Username});
             }
             catch (Exception exception)
             {
-                return Problem(exception.Message);
+                Console.WriteLine(exception.Message);
+                return Problem("Something went wrong");
             }
         }
 
@@ -74,10 +73,7 @@ namespace BackendTest.Controllers
             {
                 var user = await _userRepo.FindUserById(id);
 
-                if (user == null)
-                {
-                    return NotFound("User not found!");
-                }
+                if (user == null) return NotFound("User not found!");
 
                 await _userRepo.DeleteUser(user);
 
@@ -85,30 +81,29 @@ namespace BackendTest.Controllers
             }
             catch (Exception exception)
             {
-                return Problem(exception.Message);
+                Console.WriteLine(exception.Message);
+                return Problem("Something went wrong");
             }
         }
         
 
         [HttpPut("update-user/{id}")]
-        public async Task<IActionResult> EditUser(int id, UserDto user)
+        public async Task<IActionResult> UpdateUser(int id, UserDto user)
         {
             try
             {
                 var userIdDb = await _userRepo.FindUserById(id);
 
-                if (userIdDb == null)
-                {
-                    return NotFound("User not found");
-                }
+                if (userIdDb == null) return NotFound("User not found");
 
-                await _userRepo.AdminEditUser(id, user);
+                await _userRepo.AdminUpdateUser(id, user);
 
                 return Ok("User updated successfully");
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                return Problem(ex.Message);
+                Console.WriteLine(exception.Message);
+                return Problem("Something went wrong");
             }
         }
 
@@ -135,28 +130,27 @@ namespace BackendTest.Controllers
             }
             catch (Exception exception)
             {
-                return Problem(exception.Message);
+                Console.WriteLine(exception.Message);
+                return Problem("Something went wrong");
             }
         }
 
         [HttpPut("movies/update/{id}")]
-        public async Task<IActionResult> EditMovie([FromRoute]int id, [FromBody]MovieDto movie)
+        public async Task<IActionResult> UpdateMovie([FromRoute]int id, [FromBody]MovieDto movie)
         {
             try
             {
                 var movieInDb = await _movieRepo.FindMovieById(id);
         
-                if (movieInDb == null)
-                {
-                    return NotFound("Movie not found");
-                }
+                if (movieInDb == null) return NotFound("Movie not found");
         
                 await _movieRepo.UpdateMovieInDb(movieInDb, movie);
                 return Ok();
             }
             catch (Exception exception)
             {
-                return Problem(exception.Message);
+                Console.WriteLine(exception.Message);
+                return Problem("Something went wrong");
             }
         }
 
@@ -176,13 +170,14 @@ namespace BackendTest.Controllers
             }
             catch (Exception exception)
             {
-                return Problem(exception.Message);
+                Console.WriteLine(exception.Message);
+                return Problem("Something went wrong");
             }
         }
         
 
         [HttpGet("movies/search")]
-        public async Task<IActionResult> SearchMovie([FromBody] SearchParamsDto searchParams)
+        public async Task<IActionResult> SearchMovies([FromBody] SearchParamsDto searchParams)
         {
             try
             {
@@ -192,7 +187,8 @@ namespace BackendTest.Controllers
             }
             catch (Exception exception)
             {
-                return Problem(exception.Message);
+                Console.WriteLine(exception.Message);
+                return Problem("Something went wrong");
             }
         }
     }

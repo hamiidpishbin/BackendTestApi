@@ -37,7 +37,7 @@ public class MovieRepo : IMovieRepo
         }
         
         
-        var insertedMovie = await InsertIntoMoviesTable(movie.Name, movie.Year, directorId, connection);
+        var insertedMovie = await InsertIntoMoviesTable(movie, directorId, connection);
         
         await InsertIntoUserMoviesTable(userId, insertedMovie.Id, connection);
         
@@ -69,7 +69,7 @@ public class MovieRepo : IMovieRepo
         return mergedMovies;
     }
     
-    public async Task<MovieInDbDto> FindMovieById(int id)
+    public async Task<MovieInDbDto?> FindMovieById(int id)
     {
         var query = @"SELECT Movies.Id AS MovieId, Movies.Name, Movies.[Year], Directors.Name AS DirectorName, Actors.Name AS ActorName FROM Movies 
                       LEFT JOIN Directors ON Directors.Id = Movies.DirectorId
@@ -85,8 +85,8 @@ public class MovieRepo : IMovieRepo
 
         if (!movies.Any()) return null;
         
-        var movie = MergeActorNames(movies)[0];
-
+        var movie = MergeActorNames(movies).FirstOrDefault();
+        
         return movie;
     }
     
@@ -132,7 +132,7 @@ public class MovieRepo : IMovieRepo
 
             if (movieIdList.Any())
             {
-                string actorsNameQuery = null;
+                string? actorsNameQuery = null;
 
                 for (var i = 0; i < movieIdList.Count; i++)
                 {
@@ -191,25 +191,19 @@ public class MovieRepo : IMovieRepo
             parameters.Add("directorName", searchParams.DirectorName);
         }
 
-        try
-        {
-            query += queryConditions;
+        if (string.IsNullOrWhiteSpace(queryConditions)) throw new Exception("No valid input is provided for search");
 
-            Console.WriteLine(query);
+        query += queryConditions;
+
+        Console.WriteLine(query);
             
-            using var connection = _dapperContext.CreateConnection();
+        using var connection = _dapperContext.CreateConnection();
 
-            var rawMovies = await connection.QueryAsync<SingleRowMovie>(query, parameters);
+        var rawMovies = await connection.QueryAsync<SingleRowMovie>(query, parameters);
 
-            var movies = MergeActorNames(rawMovies);
+        var movies = MergeActorNames(rawMovies);
 
-            return movies;
-        }
-        catch (Exception exception)
-        {
-            Console.WriteLine(exception);
-            return null;
-        }
+        return movies;
     }
 
     private async Task<List<int>> FindMovieIdByActorsList(List<string> actors)
@@ -239,26 +233,26 @@ public class MovieRepo : IMovieRepo
 
         var result = await connection.QueryAsync(query, parameters);
         
-        var MovieIdList = new List<int>();
+        var movieIdList = new List<int>();
 
         foreach (var resultObj in result)
         {
-            if (!MovieIdList.Contains(resultObj.Id))
+            if (!movieIdList.Contains(resultObj.Id))
             {
-                MovieIdList.Add(resultObj.Id);
+                movieIdList.Add(resultObj.Id);
             }
         }
 
-        return MovieIdList;
+        return movieIdList;
     }
 
-    private async Task<MovieTable> InsertIntoMoviesTable(string movieName, int movieYear, int directorId, IDbConnection connection)
+    private async Task<MovieTable> InsertIntoMoviesTable(MovieDto movie, int directorId, IDbConnection connection)
     {
         var query = @"INSERT INTO Movies (Name, Year, DirectorId) VALUES (@MovieName, @MovieYear, @DirectorId)" + "SELECT CAST(SCOPE_IDENTITY() as int)";
 
         var parameters = new DynamicParameters();
-        parameters.Add("MovieName", movieName, DbType.String);
-        parameters.Add("MovieYear", movieYear, DbType.Int32);
+        parameters.Add("MovieName", movie.Name, DbType.String);
+        parameters.Add("MovieYear", movie.Year, DbType.Int32);
         parameters.Add("DirectorId", directorId, DbType.Int32);
 
         var createdMovieId = await connection.QuerySingleAsync<int>(query, parameters);
@@ -266,8 +260,8 @@ public class MovieRepo : IMovieRepo
         var createdMovie = new MovieTable()
         {
             Id = createdMovieId,
-            Name = movieName,
-            Year = movieYear,
+            Name = movie.Name,
+            Year = movie.Year,
             DirectorId = directorId
         };
 
@@ -308,6 +302,8 @@ public class MovieRepo : IMovieRepo
         param.Add("directorName", directorName, DbType.String);
 
         var insertedDirectorId = await connection.QuerySingleAsync<int>(query, param);
+
+        if (insertedDirectorId == 0) throw new NotInsertedException("Cannot insert into directors table");
 
         var insertedDirector = new Director
         {
@@ -434,29 +430,41 @@ public class MovieRepo : IMovieRepo
     
     private List<MovieInDbDto> MergeActorNames(IEnumerable<SingleRowMovie> movies)
     {
-        var movieDictionary = new Dictionary<int, MovieInDbDto>();
-
-        foreach (var movie in movies)
-        {
-            if (!movieDictionary.ContainsKey(movie.MovieId))
+        // read this
+        var data = movies.ToDictionary(s => s.MovieId, 
+           s => new MovieInDbDto()
             {
-                movieDictionary.Add(movie.MovieId, new MovieInDbDto
-                {
-                    UserId = movie.UserId,
-                    Id = movie.MovieId,
-                    Name = movie.Name,
-                    Year = movie.Year,
-                    DirectorName = movie.DirectorName,
-                    Actors = new List<string>(){movie.ActorName}
-                });
-            }
-            else
-            {
-                movieDictionary[movie.MovieId].Actors.Add(movie.ActorName);
-            }
-        }
-
-        return movieDictionary.Values.ToList();
+                UserId = s.UserId,
+                Id = s.MovieId,
+                Name = s.Name,
+                Year = s.Year,
+                DirectorName = s.DirectorName,
+                Actors = new List<string>(){s.ActorName}
+            });
+       return data.Values.ToList();
+       // var movieDictionary = new Dictionary<int, MovieInDbDto>();
+       //
+       //  foreach (var movie in movies)
+       //  {
+       //      if (!movieDictionary.ContainsKey(movie.MovieId))
+       //      {
+       //          movieDictionary.Add(movie.MovieId, new MovieInDbDto
+       //          {
+       //              UserId = movie.UserId,
+       //              Id = movie.MovieId,
+       //              Name = movie.Name,
+       //              Year = movie.Year,
+       //              DirectorName = movie.DirectorName,
+       //              Actors = new List<string>(){movie.ActorName}
+       //          });
+       //      }
+       //      else
+       //      {
+       //          movieDictionary[movie.MovieId].Actors.Add(movie.ActorName);
+       //      }
+       //  }
+       //
+       //  return movieDictionary.Values.ToList();
     }
     
     private async Task<Director> FindDirectorByName(string directorName, IDbConnection connection)

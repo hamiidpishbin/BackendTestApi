@@ -12,13 +12,11 @@ namespace BackendTest.Controllers
     {
         private readonly IUserRepo _userRepo;
         private readonly ITokenManager _tokenManager;
-        private readonly IUserManager _userManager;
 
-        public AccountController(IUserRepo userRepo, ITokenManager tokenManager, IUserManager userManager)
+        public AccountController(IUserRepo userRepo, ITokenManager tokenManager)
         {
             _userRepo = userRepo;
             _tokenManager = tokenManager;
-            _userManager = userManager;
         }
         
         
@@ -32,21 +30,22 @@ namespace BackendTest.Controllers
                 {
                     return BadRequest("Username and password cannot be the same!");
                 }
-
+            
                 var duplicateUser = await _userRepo.FindUserByUsername(user.Username);
-
+                
                 if (duplicateUser != null)
                 {
-                    return BadRequest("Username is already taken");
+                    return BadRequest("Username has already been taken.");
                 }
                 
                 var createdUser = await _userRepo.CreateUser(user);
                 
-                return Ok(createdUser);
+                return Ok(new {createdUser.Id, createdUser.Username});
             }
             catch (Exception exception)
             {
-                return Problem(exception.Message);
+                Console.WriteLine(exception.Message);
+                return Problem("Something went wrong");
             }
         }
 
@@ -60,27 +59,25 @@ namespace BackendTest.Controllers
 
                 if (userInDb == null)
                 {
-                    return BadRequest("Username and/or password is incorrect");
+                    return BadRequest("Username or password is incorrect");
                 }
 
                 var verifiedPassword = BCrypt.Net.BCrypt.Verify(user.Password, userInDb.Password);
 
                 if (!verifiedPassword)
                 {
-                    return BadRequest("Username and/or password is incorrect");
+                    return BadRequest("Username or password is incorrect");
                 }
-
-                var rolesList = await _userRepo.GetRoles(userInDb.Id);
                 
                 var token = await _tokenManager.GenerateJwtToken(userInDb);
 
-                return Ok(new {token, roles = rolesList});
+                return Ok(new {token});
             }
             catch (Exception exception)
             {
-                return Problem(exception.Message);
+                Console.WriteLine(exception.Message);
+                return Problem("Something went wrong");
             }
-
         }
 
         
@@ -92,7 +89,6 @@ namespace BackendTest.Controllers
             {
                 return BadRequest("New password cannot be the same as the current password.");
             }
-
             
             try
             {
@@ -109,7 +105,8 @@ namespace BackendTest.Controllers
             }
             catch (Exception exception)
             {
-                return Problem(exception.Message);
+                Console.WriteLine(exception.Message);
+                return Problem("Something went wrong");
             }
         }
     }

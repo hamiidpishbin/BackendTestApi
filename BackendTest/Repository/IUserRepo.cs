@@ -11,6 +11,6 @@ public interface IUserRepo
     Task<User> FindUserById(int id);
     Task ChangePassword(int userId, string newPassword);
     Task DeleteUser(User user);
-    Task AdminEditUser(int id, UserDto user);
+    Task AdminUpdateUser(int id, UserDto user);
     Task<List<string>> GetRoles(int userId);
 }

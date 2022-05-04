@@ -33,7 +33,7 @@ public class UserRepo : IUserRepo
         var query = @"INSERT INTO Users (Username, Password) VALUES (@username, @password)" + @"SELECT CAST(SCOPE_IDENTITY() as int)";
 
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
-        
+
         var parameters = new DynamicParameters();
         parameters.Add("username", user.Username, DbType.String);
         parameters.Add("password", hashedPassword, DbType.String);
@@ -58,10 +58,10 @@ public class UserRepo : IUserRepo
     {
         var query = @"SELECT * FROM Users WHERE Username = @username";
 
-        using var connection = _dapperContext.CreateConnection();
-
         var parameters = new DynamicParameters();
         parameters.Add("username", username, DbType.String);
+        
+        using var connection = _dapperContext.CreateConnection();
 
         var user = await connection.QuerySingleOrDefaultAsync<User>(query, parameters);
         
@@ -108,7 +108,7 @@ public class UserRepo : IUserRepo
         await connection.ExecuteAsync(query, parameters);
     }
     
-    public async Task AdminEditUser(int id, UserDto user)
+    public async Task AdminUpdateUser(int id, UserDto user)
     {
         var query = @"UPDATE Users SET Username = @username, [Password] = @password WHERE Id = @id";
 
@@ -138,7 +138,7 @@ public class UserRepo : IUserRepo
         {
             rolesList.Add(roleObj.Role);
         }
-
+        
         return rolesList;
     }
     
@@ -148,8 +148,6 @@ public class UserRepo : IUserRepo
         var parameters = new DynamicParameters();
         parameters.Add("userId", userId, DbType.Int32);
         
-        connection = _dapperContext.CreateConnection();
-
         await connection.ExecuteAsync(query, parameters);
     }
 }

@@ -1,6 +1,5 @@
 using System.Text;
 using BackendTest.Data;
-using BackendTest.Dtos;
 using BackendTest.Repository;
 using BackendTest.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,7 +16,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddTransient<IUserRepo, UserRepo>();
 builder.Services.AddTransient<ITokenManager, TokenManager>();
-builder.Services.AddTransient<IUserManager, UserManager>();
 builder.Services.AddTransient<IMovieRepo, MovieRepo>();
 builder.Services.AddTransient<ISearchParamsValidator, SearchParamsValidator>();
 
@@ -34,13 +32,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         IssuerSigningKey = new
             SymmetricSecurityKey
             (Encoding.UTF8.GetBytes
-                (builder.Configuration["Jwt:Key"]))
+                (builder.Configuration["Jwt:Key"])),
+         
     };
 });
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireRoles", policyBuilder => policyBuilder.RequireClaim("Role"));
 });
+
 
 var app = builder.Build();
 
@@ -51,9 +51,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 
-// app.UseSession();
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

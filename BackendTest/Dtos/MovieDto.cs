@@ -9,7 +9,21 @@ public class MovieDto
     
     [Required]
     public int Year { get; set; }
-    
+
+    // private int _ID;
+
+    // public int ID
+    // {
+    //     get
+    //     {
+    //         return _ID;
+    //     }
+    //     set
+    //     {
+    //         _ID = value;
+    //     }
+    // }
+
     [Required]
     public string DirectorName { get; }
 

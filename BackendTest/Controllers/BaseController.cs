@@ -9,7 +9,7 @@ public class BaseController : ControllerBase
     {
         get
         {
-            return Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value);
+            return Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == "UserId")?.Value);
         }
     }
 }

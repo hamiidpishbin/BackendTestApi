@@ -24,11 +24,15 @@ namespace BackendTest.Controllers
             try
             {
                 var movies = await _movieRepo.FindUserMovies(UserId);
+
+                if (!movies.Any()) return NotFound("You have no movies");
+                
                 return Ok(movies);
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                return Problem(e.Message);
+                Console.WriteLine(exception.Message);
+                return Problem("Something went wrong");
             }
         }
 
@@ -36,19 +40,13 @@ namespace BackendTest.Controllers
         [HttpPost("add-movie")]
         public async Task<IActionResult> AddMovie(MovieDto movie)
         {
-            // if (string.IsNullOrWhiteSpace(movie.Name)) return BadRequest("Name of the movie cannot be empty");
-            //
-            // if (string.IsNullOrWhiteSpace(movie.DirectorName)) return BadRequest("Director Name cannot be empty");
-            //
-            // if (!movie.Actors.Any()) return BadRequest("List of actors cannot be empty");
-            //
-            // if (movie.Actors.Any(string.IsNullOrWhiteSpace)) return BadRequest("Actor name cannot be empty");
-
             try
             {
                 var userMovies = await _movieRepo.FindUserMovies(UserId);
+
+                var duplicateMovieName = userMovies.Any(userMovieInDb => userMovieInDb.Name == movie.Name);
                 
-                if (userMovies.Any(userMovieInDb => userMovieInDb.Name == movie.Name))
+                if (duplicateMovieName)
                 {
                     return BadRequest("A movie with this name already exists.");
                 }
@@ -58,7 +56,8 @@ namespace BackendTest.Controllers
             }
             catch (Exception exception)
             {
-                return Problem(exception.Message);
+                Console.WriteLine(exception.Message);
+                return Problem("Something went wrong");
             }
         }
 
@@ -74,11 +73,13 @@ namespace BackendTest.Controllers
                 if (movieInDb == null) return NotFound("Movie not found");
 
                 await _movieRepo.UpdateMovieInDb(movieInDb, movie);
-                return Ok();
+                
+                return Ok("Movie updated successfully");
             }
             catch (Exception exception)
             {
-                return Problem(exception.Message);
+                Console.WriteLine(exception.Message);
+                return Problem("Something went wrong");
             }
         }
         
@@ -95,11 +96,12 @@ namespace BackendTest.Controllers
 
                 await _movieRepo.DeleteMovieFromDb(UserId, id);
 
-                return Ok("Movie deleted from database");
+                return Ok("Movie deleted successfully");
             }
             catch (Exception exception)
             {
-                return Problem(exception.Message);
+                Console.WriteLine(exception.Message);
+                return Problem("Something went wrong");
             }
         }
     }

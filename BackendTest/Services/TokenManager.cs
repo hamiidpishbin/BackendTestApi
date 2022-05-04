@@ -11,7 +11,6 @@ public class TokenManager : ITokenManager
 {
     private readonly IConfiguration _configuration;
     private readonly IUserRepo _userRepo;
-
     private const double ExpiryDurationMinutes = 60;
 
     public  TokenManager(IConfiguration configuration, IUserRepo userRepo)

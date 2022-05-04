@@ -6,7 +6,7 @@ public class MovieInDbDto
 {
     public int UserId { get; set; }
     [Required]
-    public int Id { get; set; }
+    public int Id { get; init; }
     
     [Required]
     public string Name { get; set; }

@@ -39,12 +39,15 @@ namespace BackendTest.Controllers
                 }
                 
                 var createdUser = await _userRepo.CreateUser(user);
+
+                await _userRepo.InsertIntoUserRolesTable(createdUser.Id);
                 
                 return Ok(createdUser);
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
+                
                 return Problem("Something went wrong");
             }
         }

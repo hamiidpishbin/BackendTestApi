@@ -48,7 +48,7 @@ public class UserRepo : IUserRepo
             Username = user.Username
         };
 
-        await AssignUserRole(createdUserId, connection);
+        // await InsertIntoUserRolesTable(createdUserId, connection);
 
         return createdUser;
     }
@@ -141,11 +141,14 @@ public class UserRepo : IUserRepo
         return rolesList;
     }
     
-    private async Task AssignUserRole(int userId, IDbConnection connection)
+    public async Task InsertIntoUserRolesTable(int userId)
     {
         var query = $"INSERT INTO UserRoles (UserId, RoleId) VALUES (@userId, {DefaultRoleId})";
+        
         var parameters = new DynamicParameters();
         parameters.Add("userId", userId, DbType.Int32);
+
+        using var connection = _dapperContext.CreateConnection();
         
         await connection.ExecuteAsync(query, parameters);
     }

@@ -13,4 +13,5 @@ public interface IUserRepo
     Task DeleteUser(User user);
     Task AdminUpdateUser(int id, UserDto user);
     Task<List<string>> GetRoles(int userId);
+    Task InsertIntoUserRolesTable(int userId);
 }

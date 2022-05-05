@@ -79,6 +79,7 @@ namespace BackendTest.Controllers
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
+                
                 return Problem("Something went wrong");
             }
         }
@@ -88,13 +89,13 @@ namespace BackendTest.Controllers
         [Authorize(Roles = "USER")]
         public async Task<IActionResult> ChangePassword(UpdatePasswordDto updatePassword)
         {
-            if (updatePassword.CurrentPassword == updatePassword.NewPassword)
-            {
-                return BadRequest("New password cannot be the same as the current password.");
-            }
-            
             try
             {
+                if (updatePassword.CurrentPassword == updatePassword.NewPassword)
+                {
+                    return BadRequest("New password cannot be the same as the current password.");
+                }
+                
                 var user = await _userRepo.FindUserById(UserId);
 
                 var currentPasswordIsCorrect = BCrypt.Net.BCrypt.Verify(updatePassword.CurrentPassword, user.Password);
@@ -104,11 +105,13 @@ namespace BackendTest.Controllers
                 var newHashedPassword = BCrypt.Net.BCrypt.HashPassword(updatePassword.NewPassword);
                 
                 await _userRepo.ChangePassword(user.Id, newHashedPassword);
+                
                 return Ok("Password changed.");
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
+                
                 return Problem("Something went wrong");
             }
         }

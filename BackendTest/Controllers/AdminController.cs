@@ -75,9 +75,9 @@ namespace BackendTest.Controllers
 
                 if (user == null) return NotFound("User not found!");
 
-                await _userRepo.DeleteUser(user);
+                await _userRepo.DeleteUser(id);
 
-                return Ok("User deleted successfully.7y9");
+                return Ok("User deleted successfully.");
             }
             catch (Exception exception)
             {

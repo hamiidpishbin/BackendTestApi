@@ -47,9 +47,7 @@ public class UserRepo : IUserRepo
             Id = createdUserId,
             Username = user.Username
         };
-
-        // await InsertIntoUserRolesTable(createdUserId, connection);
-
+        
         return createdUser;
     }
     
@@ -94,15 +92,31 @@ public class UserRepo : IUserRepo
         await connection.ExecuteAsync(query, parameters);
     }
 
-    public async Task DeleteUser(User user)
+    public async Task DeleteUser(int userId)
     {
-        var query = @"DELETE FROM UserRoles WHERE UserId = @userId;
-                      DELETE FROM Users WHERE Id = @userId";
+        using var connection = _dapperContext.CreateConnection();
+
+        await DeleteFromUserRolesTable(userId, connection);
+
+        await DeleteFromUsersTable(userId, connection);
+    }
+
+    private async Task DeleteFromUserRolesTable(int userId, IDbConnection connection)
+    {
+        var query = @"DELETE FROM UserRoles WHERE UserId = @userId";
 
         var parameters = new DynamicParameters();
-        parameters.Add("userId", user.Id, DbType.Int32);
+        parameters.Add("userId", userId, DbType.Int32);
 
-        using var connection = _dapperContext.CreateConnection();
+        await connection.ExecuteAsync(query, parameters);
+    }
+
+    private async Task DeleteFromUsersTable(int userId, IDbConnection connection)
+    {
+        var query = @"DELETE FROM Users WHERE Id = @userId";
+        
+        var parameters = new DynamicParameters();
+        parameters.Add("userId", userId, DbType.Int32);
 
         await connection.ExecuteAsync(query, parameters);
     }

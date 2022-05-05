@@ -26,7 +26,7 @@ public class SearchParamsValidator : ISearchParamsValidator
     {
         if (searchParams.Actors == null) return false;
         
-        searchParams.Actors = searchParams.Actors.Select(actor => actor.Trim().Replace("'", "").ToLower())
+        searchParams.Actors = searchParams.Actors.Where(actor => actor != null).Select(actor => actor.Trim().Replace("'", "").ToLower())
             .Where(actor => actor != "").ToList();
 
         return searchParams.Actors.Any();

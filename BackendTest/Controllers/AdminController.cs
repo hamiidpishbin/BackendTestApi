@@ -145,7 +145,7 @@ namespace BackendTest.Controllers
                 if (movieInDb == null) return NotFound("Movie not found");
         
                 await _movieRepo.UpdateMovieInDb(movieInDb, movie);
-                return Ok();
+                return Ok("Movie updated successfully");
             }
             catch (Exception exception)
             {
@@ -166,7 +166,7 @@ namespace BackendTest.Controllers
 
                 await _movieRepo.DeleteMovieFromDb(UserId, id);
 
-                return Ok("Movie deleted from database");
+                return Ok("Movie deleted successfully");
             }
             catch (Exception exception)
             {
@@ -183,12 +183,17 @@ namespace BackendTest.Controllers
             {
                 var movies = await _movieRepo.SearchMovies(searchParams);
 
+                if (movies == null) return NotFound("Movie not found");
+
                 return Ok(movies);
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
-                return Problem("Something went wrong");
+                
+                return exception is KeyNotFoundException 
+                    ? BadRequest(exception.Message) 
+                    : Problem("Something went wrong");
             }
         }
     }

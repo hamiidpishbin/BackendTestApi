@@ -10,20 +10,6 @@ public class MovieDto
     [Required]
     public int Year { get; set; }
 
-    // private int _ID;
-
-    // public int ID
-    // {
-    //     get
-    //     {
-    //         return _ID;
-    //     }
-    //     set
-    //     {
-    //         _ID = value;
-    //     }
-    // }
-
     [Required]
     public string DirectorName { get; }
 
@@ -37,6 +23,6 @@ public class MovieDto
         if (!string.IsNullOrWhiteSpace(directorName)) DirectorName = directorName.Trim().Replace("'", "").ToLower();
 
         if (actors == null || !actors.Any()) return;
-        Actors = actors.Select(actor => actor.Trim().Replace("'", "").ToLower()).Where(actor => actor != "").ToList();
+        Actors = actors.Where(actor => actor != null).Select(actor => actor.Trim().Replace("'", "").ToLower()).Where(actor => actor != "").ToList();
     }
 }

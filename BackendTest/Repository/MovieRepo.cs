@@ -132,7 +132,7 @@ public class MovieRepo : IMovieRepo
 
             if (movieIdList.Any())
             {
-                string? actorsNameQuery = null;
+                var actorsNameQuery = "";
 
                 for (var i = 0; i < movieIdList.Count; i++)
                 {
@@ -191,12 +191,10 @@ public class MovieRepo : IMovieRepo
             parameters.Add("directorName", searchParams.DirectorName);
         }
 
-        if (string.IsNullOrWhiteSpace(queryConditions)) throw new Exception("No valid input is provided for search");
-
+        if (string.IsNullOrWhiteSpace(queryConditions)) throw new KeyNotFoundException("Movie not found");
+        
         query += queryConditions;
-
-        Console.WriteLine(query);
-            
+        
         using var connection = _dapperContext.CreateConnection();
 
         var rawMovies = await connection.QueryAsync<SingleRowMovie>(query, parameters);

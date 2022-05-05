@@ -109,7 +109,7 @@ namespace BackendTest.Controllers
 
 
         [HttpGet("movies")]
-        public async Task<IActionResult> GetAllMovies()
+        public async Task<IActionResult> GetAllUsersAndMovies()
         {
             try
             {
@@ -117,16 +117,16 @@ namespace BackendTest.Controllers
 
                 if (!users.Any()) return NotFound("No users found.");
 
-                var userMovieList = new List<MovieInDbDto>();
+                var userMoviesDictionary = new Dictionary<string, List<MovieInDbDto>>();
             
                 foreach (var user in users)
                 {
                     var userMovies = await _movieRepo.FindUserMovies(user.Id);
-
-                    userMovieList.AddRange(userMovies);
+                    
+                    if (userMovies.Any()) userMoviesDictionary.Add(user.Username, userMovies);
                 }
 
-                return Ok(userMovieList);
+                return Ok(userMoviesDictionary);
             }
             catch (Exception exception)
             {

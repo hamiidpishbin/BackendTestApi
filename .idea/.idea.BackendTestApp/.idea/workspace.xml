@@ -6,10 +6,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/BackendTest/Dtos/MovieForAdminDto.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackendTest/Dtos/UsersAndMoviesForAdminDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/AdminController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/AdminController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/MoviesController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/MoviesController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/MovieInDbDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Dtos/MovieInDbDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" afterDir="false" />
     </list>
@@ -119,6 +118,7 @@
       <workItem from="1650779657525" duration="61231000" />
       <workItem from="1651035888318" duration="114558000" />
       <workItem from="1651601718436" duration="20500000" />
+      <workItem from="1651734634061" duration="1418000" />
     </task>
     <servers />
   </component>

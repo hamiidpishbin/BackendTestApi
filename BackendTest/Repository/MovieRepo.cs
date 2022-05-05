@@ -438,7 +438,6 @@ public class MovieRepo : IMovieRepo
             {
                 movieDictionary.Add(movie.MovieId, new MovieInDbDto
                 {
-                    UserId = movie.UserId,
                     Id = movie.MovieId,
                     Name = movie.Name,
                     Year = movie.Year,

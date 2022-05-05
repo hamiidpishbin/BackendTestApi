@@ -77,7 +77,7 @@ namespace BackendTest.Controllers
 
                 await _userRepo.DeleteUser(user);
 
-                return Ok("User was deleted.");
+                return Ok("User deleted successfully.7y9");
             }
             catch (Exception exception)
             {
@@ -115,7 +115,7 @@ namespace BackendTest.Controllers
             {
                 var users = await _userRepo.FindAllUsers();
 
-                if (!users.Any()) return NotFound("DB has no users.");
+                if (!users.Any()) return NotFound("No users found.");
 
                 var userMovieList = new List<MovieInDbDto>();
             

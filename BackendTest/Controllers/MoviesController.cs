@@ -44,15 +44,12 @@ namespace BackendTest.Controllers
             {
                 var userMovies = await _movieRepo.FindUserMovies(UserId);
 
-                var duplicateMovieName = userMovies.Any(userMovieInDb => userMovieInDb.Name == movie.Name);
+                var isMovieNameDuplicate = userMovies.Any(userMovieInDb => userMovieInDb.Name == movie.Name);
                 
-                if (duplicateMovieName)
-                {
-                    return BadRequest("A movie with this name already exists.");
-                }
-                
+                if (isMovieNameDuplicate) return BadRequest("A movie with this name already exists.");
+
                 await _movieRepo.InsertMovieIntoDb(UserId, movie);
-                return Ok();
+                return Ok("Movie created successfully");
             }
             catch (Exception exception)
             {

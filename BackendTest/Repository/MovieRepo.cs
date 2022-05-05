@@ -430,41 +430,29 @@ public class MovieRepo : IMovieRepo
     
     private List<MovieInDbDto> MergeActorNames(IEnumerable<SingleRowMovie> movies)
     {
-        // read this
-        var data = movies.ToDictionary(s => s.MovieId, 
-           s => new MovieInDbDto()
+        var movieDictionary = new Dictionary<int, MovieInDbDto>();
+       
+        foreach (var movie in movies)
+        {
+            if (!movieDictionary.ContainsKey(movie.MovieId))
             {
-                UserId = s.UserId,
-                Id = s.MovieId,
-                Name = s.Name,
-                Year = s.Year,
-                DirectorName = s.DirectorName,
-                Actors = new List<string>(){s.ActorName}
-            });
-       return data.Values.ToList();
-       // var movieDictionary = new Dictionary<int, MovieInDbDto>();
-       //
-       //  foreach (var movie in movies)
-       //  {
-       //      if (!movieDictionary.ContainsKey(movie.MovieId))
-       //      {
-       //          movieDictionary.Add(movie.MovieId, new MovieInDbDto
-       //          {
-       //              UserId = movie.UserId,
-       //              Id = movie.MovieId,
-       //              Name = movie.Name,
-       //              Year = movie.Year,
-       //              DirectorName = movie.DirectorName,
-       //              Actors = new List<string>(){movie.ActorName}
-       //          });
-       //      }
-       //      else
-       //      {
-       //          movieDictionary[movie.MovieId].Actors.Add(movie.ActorName);
-       //      }
-       //  }
-       //
-       //  return movieDictionary.Values.ToList();
+                movieDictionary.Add(movie.MovieId, new MovieInDbDto
+                {
+                    UserId = movie.UserId,
+                    Id = movie.MovieId,
+                    Name = movie.Name,
+                    Year = movie.Year,
+                    DirectorName = movie.DirectorName,
+                    Actors = new List<string>(){movie.ActorName}
+                });
+            }
+            else
+            {
+                movieDictionary[movie.MovieId].Actors.Add(movie.ActorName);
+            }
+        }
+       
+        return movieDictionary.Values.ToList();
     }
     
     private async Task<Director> FindDirectorByName(string directorName, IDbConnection connection)

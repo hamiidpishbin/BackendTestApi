@@ -5,9 +5,7 @@
     <projectFile profileName="IIS Express">BackendTest/BackendTest.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/AdminController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/AdminController.cs" afterDir="false" />
-    </list>
+    <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -115,7 +113,7 @@
       <workItem from="1651035888318" duration="114558000" />
       <workItem from="1651601718436" duration="20500000" />
       <workItem from="1651734634061" duration="9039000" />
-      <workItem from="1651751868498" duration="8541000" />
+      <workItem from="1651751868498" duration="8953000" />
     </task>
     <servers />
   </component>
@@ -166,17 +164,17 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/BackendTest/Controllers/AdminController.cs</url>
-          <line>160</line>
-          <properties documentPath="$PROJECT_DIR$/BackendTest/Controllers/AdminController.cs" initialLine="160" containingFunctionPresentation="method 'UpdateMovie'">
+          <url>file://$PROJECT_DIR$/BackendTest/Repository/MovieRepository.cs</url>
+          <line>112</line>
+          <properties documentPath="$PROJECT_DIR$/BackendTest/Repository/MovieRepository.cs" initialLine="112" containingFunctionPresentation="method 'SearchMovies'">
             <startOffsets>
-              <option value="5355" />
+              <option value="4095" />
             </startOffsets>
             <endOffsets>
-              <option value="5415" />
+              <option value="4554" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="1" />
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -7,7 +7,7 @@ public class SearchParamsValidator : ISearchParamsValidator
     public bool IsYearRangeValid(SearchParamsDto searchParams)
     {
         return searchParams.StartYear != null && searchParams.EndYear != null &&
-               searchParams.StartYear >= searchParams.EndYear && searchParams.StartYear > 0 && searchParams.EndYear > 0;
+               searchParams.StartYear <= searchParams.EndYear && searchParams.StartYear > 0 && searchParams.EndYear > 0;
     }
 
     public bool IsMovieNameValid(SearchParamsDto searchParams)

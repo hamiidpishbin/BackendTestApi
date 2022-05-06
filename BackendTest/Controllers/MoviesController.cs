@@ -1,4 +1,5 @@
 using BackendTest.Dtos;
+using BackendTest.Helpers;
 using BackendTest.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +11,13 @@ namespace BackendTest.Controllers
     [Authorize(Roles = "USER")]
     public class MoviesController : BaseController
     {
-        private readonly IMovieRepo _movieRepo;
+        private readonly IMovieRepository _movieRepository;
+        private readonly IMovieHelper _movieHelper;
 
-        public MoviesController(IMovieRepo movieRepo)
+        public MoviesController(IMovieRepository movieRepository, IMovieHelper movieHelper)
         {
-            _movieRepo = movieRepo;
+            _movieRepository = movieRepository;
+            _movieHelper = movieHelper;
         }
 
 
@@ -23,7 +26,7 @@ namespace BackendTest.Controllers
         {
             try
             {
-                var movies = await _movieRepo.FindUserMovies(UserId);
+                var movies = await _movieRepository.FindUserMovies(UserId);
 
                 if (!movies.Any()) return NotFound("You have no movies");
                 
@@ -42,13 +45,13 @@ namespace BackendTest.Controllers
         {
             try
             {
-                var userMovies = await _movieRepo.FindUserMovies(UserId);
+                var userMovies = await _movieRepository.FindUserMovies(UserId);
 
                 var isMovieNameDuplicate = userMovies.Any(userMovieInDb => userMovieInDb.Name == movie.Name);
                 
                 if (isMovieNameDuplicate) return BadRequest("A movie with this name already exists.");
 
-                await _movieRepo.InsertMovieIntoDb(UserId, movie);
+                await _movieRepository.InsertMovieIntoDb(UserId, movie);
                 return Ok("Movie created successfully");
             }
             catch (Exception exception)
@@ -65,11 +68,13 @@ namespace BackendTest.Controllers
         {
             try
             {
-                var movieInDb = await _movieRepo.FindMovieById(id);
+                var rawMovieInDb = await _movieRepository.FindMovieById(id);
         
-                if (movieInDb == null) return NotFound("Movie not found");
+                if (!rawMovieInDb.Any()) return NotFound("Movie not found");
 
-                await _movieRepo.UpdateMovieInDb(movieInDb, movie);
+                var movieInDb = _movieHelper.MergeActorNames(rawMovieInDb).FirstOrDefault();
+
+                await _movieRepository.UpdateMovieInDb(movieInDb, movie);
                 
                 return Ok("Movie updated successfully");
             }
@@ -87,11 +92,11 @@ namespace BackendTest.Controllers
         {
             try
             {
-                var movieInDb = await _movieRepo.FindMovieById(id);
+                var movieInDb = await _movieRepository.FindMovieById(id);
 
-                if (movieInDb == null) return NotFound("Movie not found");
+                if (!movieInDb.Any()) return NotFound("Movie not found");
 
-                await _movieRepo.DeleteMovieFromDb(UserId, id);
+                await _movieRepository.DeleteMovieFromDb(UserId, id);
 
                 return Ok("Movie deleted successfully");
             }

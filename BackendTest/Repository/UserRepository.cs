@@ -6,13 +6,13 @@ using Dapper;
 
 namespace BackendTest.Repository;
 
-public class UserRepo : IUserRepo
+public class UserRepository : IUserRepository
 {
     private readonly string DefaultRoleId = "1";
     
     private readonly DapperContext _dapperContext;
 
-    public UserRepo(DapperContext dapperContext)
+    public UserRepository(DapperContext dapperContext)
     {
         _dapperContext = dapperContext;
     }
@@ -101,26 +101,6 @@ public class UserRepo : IUserRepo
         await DeleteFromUsersTable(userId, connection);
     }
 
-    private async Task DeleteFromUserRolesTable(int userId, IDbConnection connection)
-    {
-        var query = @"DELETE FROM UserRoles WHERE UserId = @userId";
-
-        var parameters = new DynamicParameters();
-        parameters.Add("userId", userId, DbType.Int32);
-
-        await connection.ExecuteAsync(query, parameters);
-    }
-
-    private async Task DeleteFromUsersTable(int userId, IDbConnection connection)
-    {
-        var query = @"DELETE FROM Users WHERE Id = @userId";
-        
-        var parameters = new DynamicParameters();
-        parameters.Add("userId", userId, DbType.Int32);
-
-        await connection.ExecuteAsync(query, parameters);
-    }
-    
     public async Task AdminUpdateUser(int id, UserDto user)
     {
         var query = @"UPDATE Users SET Username = @username, [Password] = @password WHERE Id = @id";
@@ -137,7 +117,7 @@ public class UserRepo : IUserRepo
         await connection.ExecuteAsync(query, parameters);
     }
     
-    public async Task<List<string>> GetRoles(int userId)
+    public async Task<List<string>> GetUserRoles(int userId)
     {
         var query = @"SELECT Role FROM UserRoles INNER JOIN Roles ON UserRoles.RoleId = Roles.Id WHERE UserId = @userId";
         var parameters = new DynamicParameters();
@@ -164,6 +144,26 @@ public class UserRepo : IUserRepo
 
         using var connection = _dapperContext.CreateConnection();
         
+        await connection.ExecuteAsync(query, parameters);
+    }
+    
+    private async Task DeleteFromUserRolesTable(int userId, IDbConnection connection)
+    {
+        var query = @"DELETE FROM UserRoles WHERE UserId = @userId";
+
+        var parameters = new DynamicParameters();
+        parameters.Add("userId", userId, DbType.Int32);
+
+        await connection.ExecuteAsync(query, parameters);
+    }
+    
+    private async Task DeleteFromUsersTable(int userId, IDbConnection connection)
+    {
+        var query = @"DELETE FROM Users WHERE Id = @userId";
+        
+        var parameters = new DynamicParameters();
+        parameters.Add("userId", userId, DbType.Int32);
+
         await connection.ExecuteAsync(query, parameters);
     }
 }

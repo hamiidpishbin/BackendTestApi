@@ -10,13 +10,13 @@ namespace BackendTest.Services;
 public class TokenManager : ITokenManager
 {
     private readonly IConfiguration _configuration;
-    private readonly IUserRepo _userRepo;
+    private readonly IUserRepository _userRepository;
     private const double ExpiryDurationMinutes = 60;
 
-    public  TokenManager(IConfiguration configuration, IUserRepo userRepo)
+    public  TokenManager(IConfiguration configuration, IUserRepository userRepository)
     {
         _configuration = configuration;
-        _userRepo = userRepo;
+        _userRepository = userRepository;
     }
     
     public async Task<string> GenerateJwtToken(User user)
@@ -25,7 +25,7 @@ public class TokenManager : ITokenManager
         var jwtIssuer = _configuration["JWT:Issuer"];
         var jwtAudience = _configuration["JWT:Audience"];
 
-        var userRoles = await _userRepo.GetRoles(user.Id);
+        var userRoles = await _userRepository.GetUserRoles(user.Id);
 
         var claims = userRoles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
         claims.Add(new Claim("UserId", user.Id.ToString()));

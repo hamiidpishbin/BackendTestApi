@@ -8,12 +8,12 @@ using Microsoft.Data.SqlClient;
 namespace BackendTest.Repository;
 
 
-public class MovieRepo : IMovieRepo
+public class MovieRepository : IMovieRepository
 {
     private readonly DapperContext _dapperContext;
     private readonly ISearchParamsValidator _searchParamsValidator;
 
-    public MovieRepo(DapperContext dapperContext, ISearchParamsValidator searchParamsValidator)
+    public MovieRepository(DapperContext dapperContext, ISearchParamsValidator searchParamsValidator)
     {
         _dapperContext = dapperContext;
         _searchParamsValidator = searchParamsValidator;
@@ -46,7 +46,7 @@ public class MovieRepo : IMovieRepo
         await InsertIntoMovieActorsTable(insertedMovie.Id, insertedActorsList, connection);
     }
     
-    public async Task<List<MovieInDbDto>> FindUserMovies(int userId)
+    public async Task<IEnumerable<SingleRowMovie>> FindUserMovies(int userId)
     {
         var query =
             @"SELECT UserMovies.UserId, UserMovies.MovieId, Movies.Name, Movies.[Year], Directors.Name AS 'DirectorName', Actors.Name AS 'ActorName' FROM UserMovies 
@@ -62,14 +62,14 @@ public class MovieRepo : IMovieRepo
 
         using var connection = _dapperContext.CreateConnection();
 
-        var movies = await connection.QueryAsync<SingleRowMovie>(query, parameters);
+        var singleRowMovies = await connection.QueryAsync<SingleRowMovie>(query, parameters);
 
-        var mergedMovies = MergeActorNames(movies);
+        // var mergedMovies = MergeActorNames(movies);
 
-        return mergedMovies;
+        return singleRowMovies;
     }
     
-    public async Task<MovieInDbDto?> FindMovieById(int id)
+    public async Task<IEnumerable<SingleRowMovie>> FindMovieById(int id)
     {
         var query = @"SELECT Movies.Id AS MovieId, Movies.Name, Movies.[Year], Directors.Name AS DirectorName, Actors.Name AS ActorName FROM Movies 
                       LEFT JOIN Directors ON Directors.Id = Movies.DirectorId
@@ -83,11 +83,11 @@ public class MovieRepo : IMovieRepo
 
         var movies = await connection.QueryAsync<SingleRowMovie>(query, parameters);
 
-        if (!movies.Any()) return null;
+        // if (!movies.Any()) return null;
+        //
+        // var movie = MergeActorNames(movies).FirstOrDefault();
         
-        var movie = MergeActorNames(movies).FirstOrDefault();
-        
-        return movie;
+        return movies;
     }
     
     public async Task UpdateMovieInDb(MovieInDbDto movieInDb, MovieDto movieForUpdate)
@@ -114,7 +114,7 @@ public class MovieRepo : IMovieRepo
         await DeleteFromMoviesTable(movieId, connection);
     }
     
-    public async Task<IEnumerable<MovieInDbDto>> SearchMovies(SearchParamsDto searchParams)
+    public async Task<IEnumerable<SingleRowMovie>> SearchMovies(SearchParamsDto searchParams)
     {
         var query = @"SELECT  Movies.Id AS MovieId, UserMovies.UserId, Movies.Name, Year, Directors.Name AS DirectorName, Actors.Name AS ActorName FROM Movies 
                     LEFT JOIN Directors ON Movies.DirectorId = Directors.Id
@@ -199,9 +199,9 @@ public class MovieRepo : IMovieRepo
 
         var rawMovies = await connection.QueryAsync<SingleRowMovie>(query, parameters);
 
-        var movies = MergeActorNames(rawMovies);
+        // var movies = MergeActorNames(rawMovies);
 
-        return movies;
+        return rawMovies;
     }
 
     private async Task<List<int>> FindMovieIdByActorsList(List<string> actors)
@@ -424,34 +424,8 @@ public class MovieRepo : IMovieRepo
         parameters.Add("movieId", movieId, DbType.Int32);
 
         await connection.ExecuteAsync(query, parameters);
-    }
-    
-    private List<MovieInDbDto> MergeActorNames(IEnumerable<SingleRowMovie> movies)
-    {
-        var movieDictionary = new Dictionary<int, MovieInDbDto>();
-       
-        foreach (var movie in movies)
-        {
-            if (!movieDictionary.ContainsKey(movie.MovieId))
-            {
-                movieDictionary.Add(movie.MovieId, new MovieInDbDto
-                {
-                    Id = movie.MovieId,
-                    Name = movie.Name,
-                    Year = movie.Year,
-                    DirectorName = movie.DirectorName,
-                    Actors = new List<string>(){movie.ActorName}
-                });
-            }
-            else
-            {
-                movieDictionary[movie.MovieId].Actors.Add(movie.ActorName);
-            }
-        }
-       
-        return movieDictionary.Values.ToList();
-    }
-    
+    } 
+
     private async Task<Director> FindDirectorByName(string directorName, IDbConnection connection)
     {
         var query = @"SELECT * FROM Directors WHERE Name = @directorName";

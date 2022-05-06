@@ -10,12 +10,12 @@ namespace BackendTest.Controllers
     [ApiController]
     public class AccountController : BaseController
     {
-        private readonly IUserRepo _userRepo;
+        private readonly IUserRepository _userRepository;
         private readonly ITokenManager _tokenManager;
 
-        public AccountController(IUserRepo userRepo, ITokenManager tokenManager)
+        public AccountController(IUserRepository userRepository, ITokenManager tokenManager)
         {
-            _userRepo = userRepo;
+            _userRepository = userRepository;
             _tokenManager = tokenManager;
         }
         
@@ -31,16 +31,16 @@ namespace BackendTest.Controllers
                     return BadRequest("Username and password cannot be the same!");
                 }
             
-                var duplicateUser = await _userRepo.FindUserByUsername(user.Username);
+                var duplicateUser = await _userRepository.FindUserByUsername(user.Username);
                 
                 if (duplicateUser != null)
                 {
                     return BadRequest("Username has already been taken.");
                 }
                 
-                var createdUser = await _userRepo.CreateUser(user);
+                var createdUser = await _userRepository.CreateUser(user);
 
-                await _userRepo.InsertIntoUserRolesTable(createdUser.Id);
+                await _userRepository.InsertIntoUserRolesTable(createdUser.Id);
                 
                 return Ok(createdUser);
             }
@@ -58,7 +58,7 @@ namespace BackendTest.Controllers
         {
             try
             {
-                var userInDb = await _userRepo.FindUserByUsername(user.Username);
+                var userInDb = await _userRepository.FindUserByUsername(user.Username);
 
                 if (userInDb == null)
                 {
@@ -96,7 +96,7 @@ namespace BackendTest.Controllers
                     return BadRequest("New password cannot be the same as the current password.");
                 }
                 
-                var user = await _userRepo.FindUserById(UserId);
+                var user = await _userRepository.FindUserById(UserId);
 
                 var currentPasswordIsCorrect = BCrypt.Net.BCrypt.Verify(updatePassword.CurrentPassword, user.Password);
 
@@ -104,7 +104,7 @@ namespace BackendTest.Controllers
                 
                 var newHashedPassword = BCrypt.Net.BCrypt.HashPassword(updatePassword.NewPassword);
                 
-                await _userRepo.ChangePassword(user.Id, newHashedPassword);
+                await _userRepository.ChangePassword(user.Id, newHashedPassword);
                 
                 return Ok("Password changed.");
             }

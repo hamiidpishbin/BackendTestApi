@@ -1,5 +1,6 @@
 using System.Text;
 using BackendTest.Data;
+using BackendTest.Helpers;
 using BackendTest.Repository;
 using BackendTest.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,10 +15,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DapperContext>();
-builder.Services.AddTransient<IUserRepo, UserRepo>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<ITokenManager, TokenManager>();
-builder.Services.AddTransient<IMovieRepo, MovieRepo>();
+builder.Services.AddTransient<IMovieRepository, MovieRepository>();
 builder.Services.AddTransient<ISearchParamsValidator, SearchParamsValidator>();
+builder.Services.AddTransient<IMovieHelper, MovieHelper>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

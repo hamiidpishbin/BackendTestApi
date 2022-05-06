@@ -1,4 +1,5 @@
 using BackendTest.Dtos;
+using BackendTest.Helpers;
 using BackendTest.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,14 +11,16 @@ namespace BackendTest.Controllers
     [Authorize(Roles = "ADMIN")]
     public class AdminController : BaseController
     {
-        private readonly IUserRepo _userRepo;
-        private readonly IMovieRepo _movieRepo;
+        private readonly IUserRepository _userRepository;
+        private readonly IMovieRepository _movieRepository;
+        private readonly IMovieHelper _movieHelper;
         private readonly int _pageSize;
 
-        public AdminController(IUserRepo userRepo, IMovieRepo movieRepo, IConfiguration configuration)
+        public AdminController(IUserRepository userRepository, IMovieRepository movieRepository, IConfiguration configuration, IMovieHelper movieHelper)
         {
-            _userRepo = userRepo;
-            _movieRepo = movieRepo;
+            _userRepository = userRepository;
+            _movieRepository = movieRepository;
+            _movieHelper = movieHelper;
             _pageSize = Convert.ToInt32(configuration["PaginationSize"]);
         }
         
@@ -27,7 +30,7 @@ namespace BackendTest.Controllers
         {
             try
             {
-                var users = await _userRepo.FindAllUsers();
+                var users = await _userRepository.FindAllUsers();
 
                 if (!users.Any()) return BadRequest("No user is registered yet");
 
@@ -50,11 +53,11 @@ namespace BackendTest.Controllers
         {
             try
             {
-                var duplicateUser = await _userRepo.FindUserByUsername(user.Username);
+                var duplicateUser = await _userRepository.FindUserByUsername(user.Username);
 
                 if (duplicateUser != null) return BadRequest("Username has already been taken");
                 
-                var createdUser = await _userRepo.CreateUser(user);
+                var createdUser = await _userRepository.CreateUser(user);
 
                 return Ok(createdUser);
             }
@@ -71,11 +74,11 @@ namespace BackendTest.Controllers
         {
             try
             {
-                var user = await _userRepo.FindUserById(id);
+                var user = await _userRepository.FindUserById(id);
 
                 if (user == null) return NotFound("User not found!");
 
-                await _userRepo.DeleteUser(id);
+                await _userRepository.DeleteUser(id);
 
                 return Ok("User deleted successfully.");
             }
@@ -92,11 +95,11 @@ namespace BackendTest.Controllers
         {
             try
             {
-                var userIdDb = await _userRepo.FindUserById(id);
+                var userIdDb = await _userRepository.FindUserById(id);
 
                 if (userIdDb == null) return NotFound("User not found");
 
-                await _userRepo.AdminUpdateUser(id, user);
+                await _userRepository.AdminUpdateUser(id, user);
 
                 return Ok("User updated successfully");
             }
@@ -113,7 +116,7 @@ namespace BackendTest.Controllers
         {
             try
             {
-                var users = await _userRepo.FindAllUsers();
+                var users = await _userRepository.FindAllUsers();
 
                 if (!users.Any()) return NotFound("No users found.");
 
@@ -121,9 +124,14 @@ namespace BackendTest.Controllers
             
                 foreach (var user in users)
                 {
-                    var userMovies = await _movieRepo.FindUserMovies(user.Id);
-                    
-                    if (userMovies.Any()) userMoviesDictionary.Add(user.Username, userMovies);
+                    var singleRowUserMovies = await _movieRepository.FindUserMovies(user.Id);
+
+                    var userMovies = _movieHelper.MergeActorNames(singleRowUserMovies);
+
+                    if (userMovies.Any())
+                    {
+                        userMoviesDictionary.Add(user.Username, userMovies);
+                    }
                 }
 
                 return Ok(userMoviesDictionary);
@@ -140,11 +148,13 @@ namespace BackendTest.Controllers
         {
             try
             {
-                var movieInDb = await _movieRepo.FindMovieById(id);
+                var rawMovieInDb = await _movieRepository.FindMovieById(id);
         
-                if (movieInDb == null) return NotFound("Movie not found");
+                if (rawMovieInDb == null) return NotFound("Movie not found");
+
+                var movieInDb = _movieHelper.MergeActorNames(rawMovieInDb).FirstOrDefault();
         
-                await _movieRepo.UpdateMovieInDb(movieInDb, movie);
+                await _movieRepository.UpdateMovieInDb(movieInDb, movie);
                 return Ok("Movie updated successfully");
             }
             catch (Exception exception)
@@ -160,11 +170,11 @@ namespace BackendTest.Controllers
         {
             try
             {
-                var movieInDb = await _movieRepo.FindMovieById(id);
+                var movieInDb = await _movieRepository.FindMovieById(id);
 
-                if (movieInDb == null) return NotFound("Movie not found");
+                if (!movieInDb.Any()) return NotFound("Movie not found");
 
-                await _movieRepo.DeleteMovieFromDb(UserId, id);
+                await _movieRepository.DeleteMovieFromDb(UserId, id);
 
                 return Ok("Movie deleted successfully");
             }
@@ -181,9 +191,11 @@ namespace BackendTest.Controllers
         {
             try
             {
-                var movies = await _movieRepo.SearchMovies(searchParams);
+                var rawMovies = await _movieRepository.SearchMovies(searchParams);
 
-                if (movies == null) return NotFound("Movie not found");
+                if (!rawMovies.Any()) return NotFound("Movie not found");
+
+                var movies = _movieHelper.MergeActorNames(rawMovies);
 
                 return Ok(movies);
             }

@@ -6,7 +6,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/BackendTest/Data/DapperContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Data/DapperContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Dtos/UserDeleteDto.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Repository/MovieRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/MovieRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Services/NotInsertedException.cs" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,7 +117,7 @@
       <workItem from="1651035888318" duration="114558000" />
       <workItem from="1651601718436" duration="20500000" />
       <workItem from="1651734634061" duration="9039000" />
-      <workItem from="1651751868498" duration="9414000" />
+      <workItem from="1651751868498" duration="9843000" />
     </task>
     <servers />
   </component>

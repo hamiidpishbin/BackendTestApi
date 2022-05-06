@@ -35,12 +35,6 @@ public class TokenManager : ITokenManager
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);           
         var tokenDescriptor = new JwtSecurityToken(jwtIssuer, jwtAudience, claims, 
             expires: DateTime.Now.AddMinutes(ExpiryDurationMinutes), signingCredentials: credentials);        
-        return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);  
-
-    }
-
-    public bool ValidateToken(string key, string issuer, string audience, string token)
-    {
-        throw new NotImplementedException();
+        return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }
 }

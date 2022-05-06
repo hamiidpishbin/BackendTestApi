@@ -192,9 +192,7 @@ public class MovieRepository : IMovieRepository
         using var connection = _dapperContext.CreateConnection();
 
         var rawMovies = await connection.QueryAsync<RawMovie>(query, parameters);
-
-        // var movies = MergeActorNames(rawMovies);
-
+        
         return rawMovies;
     }
 
@@ -294,8 +292,6 @@ public class MovieRepository : IMovieRepository
         param.Add("directorName", directorName, DbType.String);
 
         var insertedDirectorId = await connection.QuerySingleAsync<int>(query, param);
-
-        if (insertedDirectorId == 0) throw new NotInsertedException("Cannot insert into directors table");
 
         var insertedDirector = new Director
         {

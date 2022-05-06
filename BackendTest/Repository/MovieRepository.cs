@@ -46,7 +46,7 @@ public class MovieRepository : IMovieRepository
         await InsertIntoMovieActorsTable(insertedMovie.Id, insertedActorsList, connection);
     }
     
-    public async Task<IEnumerable<SingleRowMovie>> FindUserMovies(int userId)
+    public async Task<IEnumerable<RawMovie>> FindUserMovies(int userId)
     {
         var query =
             @"SELECT UserMovies.UserId, UserMovies.MovieId, Movies.Name, Movies.[Year], Directors.Name AS 'DirectorName', Actors.Name AS 'ActorName' FROM UserMovies 
@@ -62,14 +62,12 @@ public class MovieRepository : IMovieRepository
 
         using var connection = _dapperContext.CreateConnection();
 
-        var singleRowMovies = await connection.QueryAsync<SingleRowMovie>(query, parameters);
-
-        // var mergedMovies = MergeActorNames(movies);
-
+        var singleRowMovies = await connection.QueryAsync<RawMovie>(query, parameters);
+        
         return singleRowMovies;
     }
     
-    public async Task<IEnumerable<SingleRowMovie>> FindMovieById(int id)
+    public async Task<IEnumerable<RawMovie>> FindMovieById(int id)
     {
         var query = @"SELECT Movies.Id AS MovieId, Movies.Name, Movies.[Year], Directors.Name AS DirectorName, Actors.Name AS ActorName FROM Movies 
                       LEFT JOIN Directors ON Directors.Id = Movies.DirectorId
@@ -81,7 +79,7 @@ public class MovieRepository : IMovieRepository
 
         using var connection = _dapperContext.CreateConnection();
 
-        var movies = await connection.QueryAsync<SingleRowMovie>(query, parameters);
+        var movies = await connection.QueryAsync<RawMovie>(query, parameters);
 
         return movies;
     }
@@ -110,7 +108,7 @@ public class MovieRepository : IMovieRepository
         await DeleteFromMoviesTable(movieId, connection);
     }
     
-    public async Task<IEnumerable<SingleRowMovie>> SearchMovies(SearchParamsDto searchParams)
+    public async Task<IEnumerable<RawMovie>> SearchMovies(SearchParamsDto searchParams)
     {
         var query = @"SELECT  Movies.Id AS MovieId, UserMovies.UserId, Movies.Name, Year, Directors.Name AS DirectorName, Actors.Name AS ActorName FROM Movies 
                     LEFT JOIN Directors ON Movies.DirectorId = Directors.Id
@@ -193,7 +191,7 @@ public class MovieRepository : IMovieRepository
         
         using var connection = _dapperContext.CreateConnection();
 
-        var rawMovies = await connection.QueryAsync<SingleRowMovie>(query, parameters);
+        var rawMovies = await connection.QueryAsync<RawMovie>(query, parameters);
 
         // var movies = MergeActorNames(rawMovies);
 

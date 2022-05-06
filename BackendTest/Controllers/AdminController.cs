@@ -112,7 +112,7 @@ namespace BackendTest.Controllers
 
 
         [HttpGet("movies")]
-        public async Task<IActionResult> GetAllUsersAndMovies()
+        public async Task<IActionResult> GetAllUserMovies()
         {
             try
             {
@@ -120,21 +120,37 @@ namespace BackendTest.Controllers
 
                 if (!users.Any()) return NotFound("No users found.");
 
-                var userMoviesDictionary = new Dictionary<string, List<MovieInDbDto>>();
+                // var userMoviesDictionary = new Dictionary<string, List<MovieInDbDto>>();
+                var userMoviesList = new List<UserMoviesForAdminDto>();
             
                 foreach (var user in users)
                 {
-                    var singleRowUserMovies = await _movieRepository.FindUserMovies(user.Id);
+                    var rawUserMovies = await _movieRepository.FindUserMovies(user.Id);
 
-                    var userMovies = _movieHelper.MergeActorNames(singleRowUserMovies);
+                    var userMovies = _movieHelper.MergeActorNames(rawUserMovies);
 
                     if (userMovies.Any())
                     {
-                        userMoviesDictionary.Add(user.Username, userMovies);
+                        foreach (var movie in userMovies)
+                        {
+                            var userMovie = new UserMoviesForAdminDto
+                            {
+                                UserId = user.Id,
+                                MovieId = movie.Id,
+                                Name = movie.Name,
+                                Year = movie.Year,
+                                DirectorName = movie.DirectorName,
+                                Actors = movie.Actors
+                            };
+                            
+                            userMoviesList.Add(userMovie);
+                        }
+                        // userMoviesDictionary.Add(user.Username, userMovies);
                     }
                 }
 
-                return Ok(userMoviesDictionary);
+                // return Ok(userMoviesDictionary);
+                return Ok(userMoviesList);
             }
             catch (Exception exception)
             {

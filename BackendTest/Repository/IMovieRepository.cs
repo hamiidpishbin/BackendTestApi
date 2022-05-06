@@ -5,9 +5,9 @@ namespace BackendTest.Repository;
 public interface IMovieRepository
 {
     Task InsertMovieIntoDb(int userId, MovieDto movie);
-    Task<IEnumerable<SingleRowMovie>> FindUserMovies(int userId);
+    Task<IEnumerable<RawMovie>> FindUserMovies(int userId);
     Task UpdateMovieInDb(MovieInDbDto movieInDb, MovieDto movieForUpdate);
-    Task<IEnumerable<SingleRowMovie>> FindMovieById(int movieId);
+    Task<IEnumerable<RawMovie>> FindMovieById(int movieId);
     Task DeleteMovieFromDb(int userId, int movieId);
-    Task<IEnumerable<SingleRowMovie>> SearchMovies(SearchParamsDto searchParams);
+    Task<IEnumerable<RawMovie>> SearchMovies(SearchParamsDto searchParams);
 }

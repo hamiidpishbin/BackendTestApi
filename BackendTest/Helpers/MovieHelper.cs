@@ -4,7 +4,7 @@ namespace BackendTest.Helpers;
 
 public class MovieHelper : IMovieHelper
 {
-    public List<MovieInDbDto> MergeActorNames(IEnumerable<SingleRowMovie> movies)
+    public List<MovieInDbDto> MergeActorNames(IEnumerable<RawMovie> movies)
     {
         var movieDictionary = new Dictionary<int, MovieInDbDto>();
        

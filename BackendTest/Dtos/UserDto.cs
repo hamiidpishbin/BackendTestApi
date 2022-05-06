@@ -5,10 +5,10 @@ namespace BackendTest.Dtos;
 
 public class UserDto
 {
-    [Required(ErrorMessage = "Username and/or password cannot be null or empty!")]
+    [Required(ErrorMessage = "Username or password cannot be null or empty!")]
     public string Username { get; }
     
-    [Required(ErrorMessage = "Username and/or password cannot be null or empty!")]
+    [Required(ErrorMessage = "Username or password cannot be null or empty!")]
     [MinLength(8, ErrorMessage = "Password word must be at least 8 characters!")]
     public string Password { get; }
 

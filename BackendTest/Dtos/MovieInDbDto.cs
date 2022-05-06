@@ -12,5 +12,5 @@ public class MovieInDbDto
     
     public string DirectorName { get; set; }
 
-    [Required] public List<string> Actors { get; set; }
+    public List<string> Actors { get; set; }
 }

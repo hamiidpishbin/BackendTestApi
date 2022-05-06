@@ -1,5 +1,6 @@
 using BackendTest.Dtos;
 using BackendTest.Helpers;
+using BackendTest.Models;
 using BackendTest.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +33,7 @@ namespace BackendTest.Controllers
             {
                 var users = await _userRepository.FindAllUsers();
 
-                if (!users.Any()) return BadRequest("No user is registered yet");
+                if (!users.Any()) return BadRequest(new ClientMessage{ErrorMessage = "No user is registered yet"});
 
                 var paginatedUserList = page > 1
                     ? users.Skip(_pageSize * page).Take(_pageSize)
@@ -43,7 +44,7 @@ namespace BackendTest.Controllers
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
-                return Problem("Something went wrong");
+                return Problem("Something went wrong! Check logs for detail.");
             }
         }
 
@@ -55,7 +56,7 @@ namespace BackendTest.Controllers
             {
                 var duplicateUser = await _userRepository.FindUserByUsername(user.Username);
 
-                if (duplicateUser != null) return BadRequest("Username has already been taken");
+                if (duplicateUser != null) return BadRequest(new ClientMessage{ErrorMessage = "Username has already been taken"});
                 
                 var createdUser = await _userRepository.CreateUser(user);
 
@@ -64,7 +65,7 @@ namespace BackendTest.Controllers
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
-                return Problem("Something went wrong");
+                return Problem("Something went wrong! Check logs for detail.");
             }
         }
 
@@ -76,16 +77,16 @@ namespace BackendTest.Controllers
             {
                 var user = await _userRepository.FindUserById(id);
 
-                if (user == null) return NotFound("User not found!");
+                if (user == null) return NotFound(new ClientMessage{ErrorMessage = "User not found!"});
 
                 await _userRepository.DeleteUser(id);
 
-                return Ok("User deleted successfully.");
+                return Ok(new ClientMessage{SuccessMessage = "User deleted successfully."});
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
-                return Problem("Something went wrong");
+                return Problem("Something went wrong! Check logs for detail.");
             }
         }
         
@@ -97,16 +98,16 @@ namespace BackendTest.Controllers
             {
                 var userIdDb = await _userRepository.FindUserById(id);
 
-                if (userIdDb == null) return NotFound("User not found");
+                if (userIdDb == null) return NotFound(new ClientMessage{ErrorMessage = "User not found"});
 
                 await _userRepository.AdminUpdateUser(id, user);
 
-                return Ok("User updated successfully");
+                return Ok(new ClientMessage{SuccessMessage = "User updated successfully"});
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
-                return Problem("Something went wrong");
+                return Problem("Something went wrong! Check logs for detail.");
             }
         }
 
@@ -118,7 +119,7 @@ namespace BackendTest.Controllers
             {
                 var users = await _userRepository.FindAllUsers();
 
-                if (!users.Any()) return NotFound("No users found.");
+                if (!users.Any()) return NotFound(new ClientMessage{ErrorMessage = "No users found."});
 
                 var userMoviesList = new List<UserMoviesForAdminDto>();
             
@@ -144,12 +145,12 @@ namespace BackendTest.Controllers
                         userMoviesList.Add(userMovie);
                     }
                 }
-                return Ok(userMoviesList);
+                return Ok(new ClientMessage{SuccessMessage = "Movies list retrieved successfully", Data = userMoviesList});
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
-                return Problem("Something went wrong");
+                return Problem("Something went wrong! Check logs for detail.");
             }
         }
 
@@ -160,17 +161,17 @@ namespace BackendTest.Controllers
             {
                 var rawMovieInDb = await _movieRepository.FindMovieById(id);
         
-                if (!rawMovieInDb.Any()) return NotFound("Movie not found");
+                if (!rawMovieInDb.Any()) return NotFound(new ClientMessage{ErrorMessage = "Movie not found"});
 
                 var movieInDb = _movieHelper.MergeActorNames(rawMovieInDb).FirstOrDefault();
         
                 await _movieRepository.UpdateMovieInDb(movieInDb, movie);
-                return Ok("Movie updated successfully");
+                return Ok(new ClientMessage{SuccessMessage = "Movie updated successfully"});
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
-                return Problem("Something went wrong");
+                return Problem("Something went wrong! Check logs for detail.");
             }
         }
 
@@ -182,16 +183,16 @@ namespace BackendTest.Controllers
             {
                 var movieInDb = await _movieRepository.FindMovieById(id);
 
-                if (!movieInDb.Any()) return NotFound("Movie not found");
+                if (!movieInDb.Any()) return NotFound(new ClientMessage{ErrorMessage = "Movie not found"});
 
                 await _movieRepository.DeleteMovieFromDb(UserId, id);
 
-                return Ok("Movie deleted successfully");
+                return Ok(new ClientMessage{SuccessMessage = "Movie deleted successfully"});
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
-                return Problem("Something went wrong");
+                return Problem("Something went wrong! Check logs for detail.");
             }
         }
         
@@ -203,7 +204,7 @@ namespace BackendTest.Controllers
             {
                 var rawMovies = await _movieRepository.SearchMovies(searchParams);
 
-                if (!rawMovies.Any()) return NotFound("Movie not found");
+                if (!rawMovies.Any()) return NotFound(new ClientMessage{ErrorMessage = "Movie not found"});
 
                 var movies = _movieHelper.MergeActorNames(rawMovies);
 
@@ -215,7 +216,7 @@ namespace BackendTest.Controllers
                 
                 return exception is KeyNotFoundException 
                     ? BadRequest(exception.Message) 
-                    : Problem("Something went wrong");
+                    : Problem("Something went wrong! Check logs for detail.");
             }
         }
     }

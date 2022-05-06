@@ -1,4 +1,5 @@
 using BackendTest.Dtos;
+using BackendTest.Models;
 using BackendTest.Repository;
 using BackendTest.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -28,27 +29,31 @@ namespace BackendTest.Controllers
             {
                 if (user.Username == user.Password)
                 {
-                    return BadRequest("Username and password cannot be the same!");
+                    return BadRequest(new ClientMessage{ErrorMessage = "Username and password cannot be the same!"});
                 }
             
                 var duplicateUser = await _userRepository.FindUserByUsername(user.Username);
                 
                 if (duplicateUser != null)
                 {
-                    return BadRequest("Username has already been taken.");
+                    return BadRequest(new ClientMessage{ErrorMessage = "Username has already been taken."});
                 }
                 
                 var createdUser = await _userRepository.CreateUser(user);
 
                 await _userRepository.InsertIntoUserRolesTable(createdUser.Id);
                 
-                return Ok(createdUser);
+                return Ok(new ClientMessage
+                {
+                    SuccessMessage = "User was created successfully.",
+                    Data = createdUser
+                });
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
                 
-                return Problem("Something went wrong");
+                return Problem("Something went wrong! Check logs for detail.");
             }
         }
 
@@ -62,25 +67,29 @@ namespace BackendTest.Controllers
 
                 if (userInDb == null)
                 {
-                    return BadRequest("Username or password is incorrect");
+                    return BadRequest(new ClientMessage{ErrorMessage = "Username or password is incorrect"});
                 }
 
                 var verifiedPassword = BCrypt.Net.BCrypt.Verify(user.Password, userInDb.Password);
 
                 if (!verifiedPassword)
                 {
-                    return BadRequest("Username or password is incorrect");
+                    return BadRequest(new ClientMessage{ErrorMessage = "Username or password is incorrect"});
                 }
                 
                 var token = await _tokenManager.GenerateJwtToken(userInDb);
 
-                return Ok(new {message = "Logged in successfully", token});
+                return Ok(new ClientMessage
+                {
+                    SuccessMessage = "Logged in successfully",
+                    Data = token
+                });
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
                 
-                return Problem("Something went wrong");
+                return Problem("Something went wrong! Check logs for detail.");
             }
         }
 
@@ -93,26 +102,26 @@ namespace BackendTest.Controllers
             {
                 if (updatePassword.CurrentPassword == updatePassword.NewPassword)
                 {
-                    return BadRequest("New password cannot be the same as the current password.");
+                    return BadRequest(new ClientMessage{ErrorMessage = "New password cannot be the same as the current password."});
                 }
                 
                 var user = await _userRepository.FindUserById(UserId);
 
                 var currentPasswordIsCorrect = BCrypt.Net.BCrypt.Verify(updatePassword.CurrentPassword, user.Password);
 
-                if (!currentPasswordIsCorrect) return BadRequest("Current password is not correct");
+                if (!currentPasswordIsCorrect) return BadRequest(new ClientMessage{ErrorMessage = "Current password is not correct"});
                 
                 var newHashedPassword = BCrypt.Net.BCrypt.HashPassword(updatePassword.NewPassword);
                 
                 await _userRepository.ChangePassword(user.Id, newHashedPassword);
                 
-                return Ok(new {message = "Password changed successfully"});
+                return Ok(new ClientMessage{SuccessMessage = "Password changed successfully"});
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
                 
-                return Problem("Something went wrong");
+                return Problem("Something went wrong! Check logs for detail.");
             }
         }
     }

@@ -6,20 +6,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8121d4cb-db2f-43ad-8073-a933b9ef0080" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/BackendTest/Helpers/IMovieHelper.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackendTest/Helpers/MovieHelper.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BackendTestApp/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/AccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/AccountController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/AdminController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/AdminController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Controllers/MoviesController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Controllers/MoviesController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Repository/IMovieRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/IMovieRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Repository/IUserRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/IUserRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Repository/MovieRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/MovieRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Repository/UserRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/UserRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Services/DuplicateException.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Services/NotFoundException.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackendTest/Services/TokenManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Services/TokenManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackendTest/Repository/MovieRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BackendTest/Repository/MovieRepository.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -128,7 +117,7 @@
       <workItem from="1651035888318" duration="114558000" />
       <workItem from="1651601718436" duration="20500000" />
       <workItem from="1651734634061" duration="9039000" />
-      <workItem from="1651751868498" duration="2466000" />
+      <workItem from="1651751868498" duration="5003000" />
     </task>
     <servers />
   </component>

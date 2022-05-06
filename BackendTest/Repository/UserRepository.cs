@@ -17,13 +17,13 @@ public class UserRepository : IUserRepository
         _dapperContext = dapperContext;
     }
     
-    public async Task<List<User>> FindAllUsers()
+    public async Task<List<CreatedUserDto>> FindAllUsers()
     {
         var query = @"SELECT * FROM Users";
         
         using var connection = _dapperContext.CreateConnection();
 
-        var users = await connection.QueryAsync<User>(query);
+        var users = await connection.QueryAsync<CreatedUserDto>(query);
 
         return users.ToList();
     }

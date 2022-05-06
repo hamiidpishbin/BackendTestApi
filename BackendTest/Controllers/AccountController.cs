@@ -74,7 +74,7 @@ namespace BackendTest.Controllers
                 
                 var token = await _tokenManager.GenerateJwtToken(userInDb);
 
-                return Ok(new {token});
+                return Ok(new {message = "Logged in successfully", token});
             }
             catch (Exception exception)
             {
@@ -106,7 +106,7 @@ namespace BackendTest.Controllers
                 
                 await _userRepository.ChangePassword(user.Id, newHashedPassword);
                 
-                return Ok("Password changed.");
+                return Ok(new {message = "Password changed successfully"});
             }
             catch (Exception exception)
             {

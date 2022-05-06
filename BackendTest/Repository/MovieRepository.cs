@@ -83,10 +83,6 @@ public class MovieRepository : IMovieRepository
 
         var movies = await connection.QueryAsync<SingleRowMovie>(query, parameters);
 
-        // if (!movies.Any()) return null;
-        //
-        // var movie = MergeActorNames(movies).FirstOrDefault();
-        
         return movies;
     }
     

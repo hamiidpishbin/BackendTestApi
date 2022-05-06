@@ -5,7 +5,7 @@ namespace BackendTest.Repository;
 
 public interface IUserRepository
 {
-    Task<List<User>> FindAllUsers();
+    Task<List<CreatedUserDto>> FindAllUsers();
     Task<CreatedUserDto> CreateUser(UserDto user);
     Task<User> FindUserByUsername(string username);
     Task<User> FindUserById(int id);

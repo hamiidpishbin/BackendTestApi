@@ -120,7 +120,6 @@ namespace BackendTest.Controllers
 
                 if (!users.Any()) return NotFound("No users found.");
 
-                // var userMoviesDictionary = new Dictionary<string, List<MovieInDbDto>>();
                 var userMoviesList = new List<UserMoviesForAdminDto>();
             
                 foreach (var user in users)
@@ -129,27 +128,22 @@ namespace BackendTest.Controllers
 
                     var userMovies = _movieHelper.MergeActorNames(rawUserMovies);
 
-                    if (userMovies.Any())
+                    if (!userMovies.Any()) continue;
+                    foreach (var movie in userMovies)
                     {
-                        foreach (var movie in userMovies)
+                        var userMovie = new UserMoviesForAdminDto
                         {
-                            var userMovie = new UserMoviesForAdminDto
-                            {
-                                UserId = user.Id,
-                                MovieId = movie.Id,
-                                Name = movie.Name,
-                                Year = movie.Year,
-                                DirectorName = movie.DirectorName,
-                                Actors = movie.Actors
-                            };
+                            UserId = user.Id,
+                            MovieId = movie.Id,
+                            Name = movie.Name,
+                            Year = movie.Year,
+                            DirectorName = movie.DirectorName,
+                            Actors = movie.Actors
+                        };
                             
-                            userMoviesList.Add(userMovie);
-                        }
-                        // userMoviesDictionary.Add(user.Username, userMovies);
+                        userMoviesList.Add(userMovie);
                     }
                 }
-
-                // return Ok(userMoviesDictionary);
                 return Ok(userMoviesList);
             }
             catch (Exception exception)
@@ -166,7 +160,7 @@ namespace BackendTest.Controllers
             {
                 var rawMovieInDb = await _movieRepository.FindMovieById(id);
         
-                if (rawMovieInDb == null) return NotFound("Movie not found");
+                if (!rawMovieInDb.Any()) return NotFound("Movie not found");
 
                 var movieInDb = _movieHelper.MergeActorNames(rawMovieInDb).FirstOrDefault();
         

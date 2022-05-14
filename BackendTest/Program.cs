@@ -1,6 +1,7 @@
 using System.Text;
 using BackendTest.Data;
 using BackendTest.Helpers;
+using BackendTest.Middlewares;
 using BackendTest.Repository;
 using BackendTest.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,28 +22,6 @@ builder.Services.AddTransient<IMovieRepository, MovieRepository>();
 builder.Services.AddTransient<ISearchParamsValidator, SearchParamsValidator>();
 builder.Services.AddTransient<IMovieHelper, MovieHelper>();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Issuer"],
-        IssuerSigningKey = new
-            SymmetricSecurityKey
-            (Encoding.UTF8.GetBytes
-                (builder.Configuration["Jwt:Key"])),
-         
-    };
-});
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("RequireRoles", policyBuilder => policyBuilder.RequireClaim("Role"));
-});
-
 
 var app = builder.Build();
 
@@ -56,9 +35,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
-
+app.UseJwtMiddleware();
 app.MapControllers();
 
 app.Run();

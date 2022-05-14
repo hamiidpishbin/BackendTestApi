@@ -1,15 +1,15 @@
+using BackendTest.Attributes;
 using BackendTest.Dtos;
 using BackendTest.Helpers;
 using BackendTest.Models;
 using BackendTest.Repository;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendTest.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "USER")]
+    [RoleAuthorization("USER")]
     public class MoviesController : BaseController
     {
         private readonly IMovieRepository _movieRepository;
@@ -31,7 +31,7 @@ namespace BackendTest.Controllers
 
                 if (!movies.Any()) return NotFound(new ClientMessage{ErrorMessage = "No movies found"});
                 
-                return Ok(movies);
+                return Ok(new ClientMessage{SuccessMessage = "Movies list retrieved successfully", Data = movies});
             }
             catch (Exception exception)
             {

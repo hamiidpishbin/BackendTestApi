@@ -21,20 +21,59 @@ public class TokenManager : ITokenManager
     
     public async Task<string> GenerateJwtToken(User user)
     {
-        var jwtKey = _configuration["JWT:Key"];
-        var jwtIssuer = _configuration["JWT:Issuer"];
-        var jwtAudience = _configuration["JWT:Audience"];
-
         var userRoles = await _userRepository.GetUserRoles(user.Id);
 
         var claims = userRoles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
         claims.Add(new Claim("UserId", user.Id.ToString()));
+        
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.UTF8.GetBytes(_configuration["JWT:Key"]);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.Now.AddMinutes(ExpiryDurationMinutes),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        
+        return tokenHandler.WriteToken(token);
+    }
 
+    public UserWithRoles ValidateJwtToken(string? token)
+    {
+        if (token == null)
+            return null;
 
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));        
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);           
-        var tokenDescriptor = new JwtSecurityToken(jwtIssuer, jwtAudience, claims, 
-            expires: DateTime.Now.AddMinutes(ExpiryDurationMinutes), signingCredentials: credentials);        
-        return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.UTF8.GetBytes(_configuration["JWT:Key"]);
+
+        try
+        {
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false, 
+                ClockSkew = TimeSpan.Zero
+            }, out SecurityToken validatedToken);
+            
+            var jwtToken = (JwtSecurityToken) validatedToken;
+            
+            var userId = int.Parse(jwtToken.Claims.Single(x => x.Type == "UserId").Value);
+            var userRoles = jwtToken.Claims.Where(x => x.Type == "role").Select(y => y.Value).ToList();
+            
+            var user = new UserWithRoles
+            {
+                Id = userId,
+                Roles = userRoles
+            };
+
+            return user;
+        }
+        catch (Exception exception)
+        {
+            throw;
+        }
     }
 }

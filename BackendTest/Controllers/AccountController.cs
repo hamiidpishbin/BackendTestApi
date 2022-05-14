@@ -1,8 +1,8 @@
+using BackendTest.Attributes;
 using BackendTest.Dtos;
 using BackendTest.Models;
 using BackendTest.Repository;
 using BackendTest.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendTest.Controllers
@@ -95,7 +95,7 @@ namespace BackendTest.Controllers
 
         
         [HttpPut("update-password")]
-        [Authorize(Roles = "USER")]
+        [RoleAuthorization("USER")]
         public async Task<IActionResult> ChangePassword(UpdatePasswordDto updatePassword)
         {
             try

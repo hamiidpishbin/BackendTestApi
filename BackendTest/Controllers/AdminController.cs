@@ -1,15 +1,15 @@
+using BackendTest.Attributes;
 using BackendTest.Dtos;
 using BackendTest.Helpers;
 using BackendTest.Models;
 using BackendTest.Repository;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendTest.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "ADMIN")]
+    [RoleAuthorization("ADMIN")]
     public class AdminController : BaseController
     {
         private readonly IUserRepository _userRepository;
